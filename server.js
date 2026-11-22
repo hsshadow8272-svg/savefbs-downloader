@@ -7,13 +7,15 @@ const { execFile } = require("child_process");
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(__dirname));
 
+const PORT = process.env.PORT || 3000;
 const downloadsDir = path.join(__dirname, "downloads");
 if (!fs.existsSync(downloadsDir)) {
   fs.mkdirSync(downloadsDir);
 }
 
-// خريطة الفلاتر المطلوبة (8K, 4K, 2K, 1080p, 120fps, 60fps)
 function buildFormatSelector(preset) {
   switch (preset) {
     case "8k":
@@ -33,6 +35,18 @@ function buildFormatSelector(preset) {
   }
 }
 
+app.get("/", (req, res) => {
+  const publicIndex = path.join(__dirname, "public", "index.html");
+  const rootIndex = path.join(__dirname, "index.html");
+  if (fs.existsSync(publicIndex)) {
+    return res.sendFile(publicIndex);
+  }
+  if (fs.existsSync(rootIndex)) {
+    return res.sendFile(rootIndex);
+  }
+  res.status(404).send("index.html not found");
+});
+
 app.post("/api/fetch-video", (req, res) => {
   const { url } = req.body;
   if (!url) return res.status(400).json({ error: "الرابط مطلوب" });
@@ -43,16 +57,13 @@ app.post("/api/fetch-video", (req, res) => {
     }
     try {
       const info = JSON.parse(stdout);
-      const maxHeight = info.height || 0;
-      const maxFps = info.fps || 0;
-
       res.json({
         title: info.title || "video",
         thumbnail: info.thumbnail || "",
         duration: info.duration || 0,
         uploader: info.uploader || "غير معروف",
-        sourceMaxQuality: maxHeight ? `${maxHeight}p` : "تلقائي",
-        sourceMaxFps: maxFps ? `${maxFps}fps` : "تلقائي",
+        sourceMaxQuality: info.height ? `${info.height}p` : "تلقائي",
+        sourceMaxFps: info.fps ? `${info.fps}fps` : "تلقائي",
       });
     } catch {
       res.status(500).json({ error: "خطأ في قراءة بيانات الفيديو" });
@@ -69,29 +80,22 @@ app.get("/api/download", (req, res) => {
   const filePath = path.join(downloadsDir, fileName);
   const formatSelector = buildFormatSelector(quality);
 
-  const args = [
-    "-f",
-    formatSelector,
-    "--merge-output-format",
-    "mp4",
-    "--no-playlist",
-    "-o",
-    filePath,
-    videoUrl,
-  ];
+  execFile(
+    "yt-dlp",
+    ["-f", formatSelector, "--merge-output-format", "mp4", "--no-playlist", "-o", filePath, videoUrl],
+    (err) => {
+      if (err || !fs.existsSync(filePath)) {
+        return res.status(500).send("فشل تحميل الفيديو بالجودة المطلوبة");
+      }
 
-  execFile("yt-dlp", args, (err) => {
-    if (err || !fs.existsSync(filePath)) {
-      return res.status(500).send("فشل تحميل الفيديو بالجودة المطلوبة");
+      res.setHeader("Content-Type", "video/mp4");
+      res.download(filePath, fileName, () => {
+        fs.unlink(filePath, () => {});
+      });
     }
-
-    res.setHeader("Content-Type", "video/mp4");
-    res.download(filePath, fileName, () => {
-      fs.unlink(filePath, () => {});
-    });
-  });
+  );
 });
 
-app.listen(3000, "0.0.0.0", () => {
-  console.log("Server running on http://localhost:3000");
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
 });
