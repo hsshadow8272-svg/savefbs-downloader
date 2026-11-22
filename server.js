@@ -35,6 +35,32 @@ function buildFormatSelector(preset) {
   }
 }
 
+function runYtDlpWithFallback(baseArgs, url, callback) {
+  const impersonateArgs = [
+    ...baseArgs,
+    "--impersonate",
+    "chrome",
+    "--user-agent",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+    url,
+  ];
+
+  execFile("yt-dlp", impersonateArgs, (err, stdout, stderr) => {
+    if (!err) {
+      return callback(null, stdout, stderr);
+    }
+
+    const fallbackArgs = [...baseArgs, url];
+    execFile("yt-dlp", fallbackArgs, (err2, stdout2, stderr2) => {
+      if (!err2) {
+        return callback(null, stdout2, stderr2);
+      }
+      const combinedErr = `${stderr || ""}\n${stderr2 || ""}`.trim() || (err2 && err2.message) || (err && err.message);
+      callback(err2 || err, stdout2 || stdout, combinedErr);
+    });
+  });
+}
+
 app.get("/", (req, res) => {
   const publicIndex = path.join(__dirname, "public", "index.html");
   const rootIndex = path.join(__dirname, "index.html");
@@ -51,7 +77,7 @@ app.post("/api/fetch-video", (req, res) => {
   const { url } = req.body;
   if (!url) return res.status(400).json({ error: "الرابط مطلوب" });
 
-  execFile("yt-dlp", ["-j", "--no-playlist", url], (err, stdout, stderr) => {
+  runYtDlpWithFallback(["-j", "--no-playlist"], url, (err, stdout, stderr) => {
     if (err) {
       console.error("yt-dlp error:", stderr || err.message);
       return res.status(500).json({
@@ -84,9 +110,9 @@ app.get("/api/download", (req, res) => {
   const filePath = path.join(downloadsDir, fileName);
   const formatSelector = buildFormatSelector(quality);
 
-  execFile(
-    "yt-dlp",
-    ["-f", formatSelector, "--merge-output-format", "mp4", "--no-playlist", "-o", filePath, videoUrl],
+  runYtDlpWithFallback(
+    ["-f", formatSelector, "--merge-output-format", "mp4", "--no-playlist", "-o", filePath],
+    videoUrl,
     (err, stdout, stderr) => {
       if (err || !fs.existsSync(filePath)) {
         console.error("yt-dlp download error:", stderr || (err && err.message));
