@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>SaveFBS — تحميل الفيديو بجودة عالية</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 16px;
+    }
+    .container {
+      max-width: 760px;
+      margin: 20px auto;
+      padding: 24px 20px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: #38bdf8;
+    }
+    .badge {
+      background: #0ea5e922;
+      color: #7dd3fc;
+      border: 1px solid #0284c7;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 190px auto;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    input, select {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #475569;
+      border-radius: 12px;
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 1rem;
+    }
+    button {
+      padding: 13px 18px;
+      border: none;
+      border-radius: 12px;
+      background: #0284c7;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    button:hover { background: #0369a1; }
+    button:disabled { opacity: 0.55; cursor: not-allowed; }
+    .quick-presets {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .preset-chip {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+    .preset-chip.active {
+      background: #0284c7;
+      border-color: #38bdf8;
+      color: #fff;
+      font-weight: 700;
+    }
+    .error {
+      color: #f87171;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+    .result {
+      display: none;
+      margin-top: 18px;
+      padding: 16px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 14px;
+    }
+    .meta {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .thumb {
+      width: 150px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #1e293b;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .dl-link {
+      display: inline-block;
+      padding: 11px 16px;
+      background: #16a34a;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+    .secondary-btn {
+      padding: 11px 14px;
+      background: #334155;
+      color: #f8fafc;
+      border-radius: 10px;
+      font-size: 0.88rem;
+    }
+    .history {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #334155;
+    }
+    .history h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      color: #94a3b8;
+    }
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      background: #0f172a;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+    .history-item span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    @media (max-width: 640px) {
+      .controls {
+        grid-template-columns: 1fr;
+      }
+      .thumb {
+        width: 100%;
+        height: 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>SaveFBS Downloader</h1>
+      <span class="badge">iPhone 11+ & MP4 Ready</span>
+    </div>
+
+    <form id="form">
+      <div class="controls">
+        <input type="url" id="urlInput" placeholder="الصق رابط الفيديو هنا..." required />
+        <select id="qualitySelect">
+          <option value="best">أفضل جودة متاحة</option>
+          <option value="8k">8K (4320p)</option>
+          <option value="4k">4K (2160p)</option>
+          <option value="2k">2K (1440p)</option>
+          <option value="1080p">1080p Full HD</option>
+          <option value="120fps">120fps (إطارات عالية)</option>
+          <option value="60fps">60fps (سلس)</option>
+        </select>
+        <button type="submit" id="btn">جلب الفيديو</button>
+      </div>
+    </form>
+
+    <div class="quick-presets" id="presets">
+      <button type="button" class="preset-chip active" data-q="best">تلقائي</button>
+      <button type="button" class="preset-chip" data-q="8k">8K</button>
+      <button type="button" class="preset-chip" data-q="4k">4K</button>
+      <button type="button" class="preset-chip" data-q="2k">2K</button>
+      <button type="button" class="preset-chip" data-q="1080p">1080p</button>
+      <button type="button" class="preset-chip" data-q="120fps">120fps</button>
+      <button type="button" class="preset-chip" data-q="60fps">60fps</button>
+    </div>
+
+    <div class="error" id="errorBox"></div>
+
+    <div class="result" id="resultBox">
+      <div class="meta">
+        <img id="thumbImg" class="thumb" alt="معاينة الفيديو" />
+        <div>
+          <h3 id="videoTitle" style="margin:0 0 6px;"></h3>
+          <div id="videoInfo" style="color:#94a3b8;font-size:0.88rem;"></div>
+        </div>
+      </div>
+      <div class="actions">
+        <a id="dlBtn" class="dl-link" href="#">تحميل MP4</a>
+        <button type="button" class="secondary-btn" id="copyBtn">نسخ رابط التحميل</button>
+      </div>
+    </div>
+
+    <div class="history">
+      <h3>آخر الروابط المحللة</h3>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin;
+    const form = document.getElementById("form");
+    const urlInput = document.getElementById("urlInput");
+    const qualitySelect = document.getElementById("qualitySelect");
+    const btn = document.getElementById("btn");
+    const errorBox = document.getElementById("errorBox");
+    const resultBox = document.getElementById("resultBox");
+    const videoTitle = document.getElementById("videoTitle");
+    const videoInfo = document.getElementById("videoInfo");
+    const thumbImg = document.getElementById("thumbImg");
+    const dlBtn = document.getElementById("dlBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const historyList = document.getElementById("historyList");
+    const chips = document.querySelectorAll(".preset-chip");
+
+    function syncQuality(q) {
+      qualitySelect.value = q;
+      chips.forEach((c) => c.classList.toggle("active", c.dataset.q === q));
+    }
+
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => syncQuality(chip.dataset.q));
+    });
+    qualitySelect.addEventListener("change", () => syncQuality(qualitySelect.value));
+
+    function renderHistory(items) {
+      historyList.innerHTML = items.length
+        ? items
+            .map(
+              (item) =>
+                `<div class="history-item"><span>${item.title || item.url}</span><span style="color:#38bdf8;">${item.quality}</span></div>`
+            )
+            .join("")
+        : `<div style="color:#64748b;font-size:0.85rem;">لا يوجد سجل بعد</div>`;
+    }
+
+    function saveHistory(entry) {
+      const prev = JSON.parse(localStorage.getItem("savefbs_history") || "[]");
+      const next = [entry, ...prev.filter((x) => x.url !== entry.url)].slice(0, 5);
+      localStorage.setItem("savefbs_history", JSON.stringify(next));
+      renderHistory(next);
+    }
+
+    renderHistory(JSON.parse(localStorage.getItem("savefbs_history") || "[]"));
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      btn.disabled = true;
+      btn.textContent = "جاري التحليل...";
+      errorBox.textContent = "";
+      resultBox.style.display = "none";
+
+      try {
+        const cleanUrl = urlInput.value.trim();
+        const selectedQuality = qualitySelect.value;
+        const res = await fetch(`${API_BASE}/api/fetch-video`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: cleanUrl }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "فشل جلب الفيديو");
+
+        videoTitle.textContent = data.title;
+        videoInfo.textContent = `الناشر: ${data.uploader} | أقصى جودة بالمصدر: ${data.sourceMaxQuality} (${data.sourceMaxFps})`;
+        thumbImg.src = data.thumbnail || "";
+        thumbImg.style.display = data.thumbnail ? "block" : "none";
+
+        const downloadUrl = `${API_BASE}/api/download?url=${encodeURIComponent(cleanUrl)}&quality=${encodeURIComponent(selectedQuality)}`;
+        dlBtn.href = downloadUrl;
+        dlBtn.textContent = `تحميل (${selectedQuality.toUpperCase()}) MP4`;
+
+        copyBtn.onclick = () => {
+          navigator.clipboard?.writeText(downloadUrl);
+          copyBtn.textContent = "تم النسخ ✓";
+          setTimeout(() => (copyBtn.textContent = "نسخ رابط التحميل"), 1500);
+        };
+
+        resultBox.style.display = "block";
+        saveHistory({ title: data.title, url: cleanUrl, quality: selectedQuality.toUpperCase() });
+      } catch (err) {
+        errorBox.textContent = err.message;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "جلب الفيديو";
+      }
+    });
+  </script>
+</body>
+</html>
