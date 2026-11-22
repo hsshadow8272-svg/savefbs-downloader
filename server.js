@@ -51,9 +51,13 @@ app.post("/api/fetch-video", (req, res) => {
   const { url } = req.body;
   if (!url) return res.status(400).json({ error: "الرابط مطلوب" });
 
-  execFile("yt-dlp", ["-j", "--no-playlist", url], (err, stdout) => {
+  execFile("yt-dlp", ["-j", "--no-playlist", url], (err, stdout, stderr) => {
     if (err) {
-      return res.status(500).json({ error: "تعذر تحليل الرابط أو الفيديو خاص" });
+      console.error("yt-dlp error:", stderr || err.message);
+      return res.status(500).json({
+        error: "تعذر تحليل الرابط أو الفيديو خاص",
+        details: (stderr || err.message || "").slice(0, 500),
+      });
     }
     try {
       const info = JSON.parse(stdout);
@@ -83,8 +87,9 @@ app.get("/api/download", (req, res) => {
   execFile(
     "yt-dlp",
     ["-f", formatSelector, "--merge-output-format", "mp4", "--no-playlist", "-o", filePath, videoUrl],
-    (err) => {
+    (err, stdout, stderr) => {
       if (err || !fs.existsSync(filePath)) {
+        console.error("yt-dlp download error:", stderr || (err && err.message));
         return res.status(500).send("فشل تحميل الفيديو بالجودة المطلوبة");
       }
 
