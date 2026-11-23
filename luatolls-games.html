@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LuaTolls Games Library — مكتبة الألعاب</title>
+  <style>
+    :root {
+      --bg: #070b14;
+      --card: #0f172a;
+      --card-2: #162038;
+      --border: rgba(148, 163, 184, 0.16);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #3b82f6;
+      --accent: #22c55e;
+      --fire: #f97316;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Arabic", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent 45%),
+        radial-gradient(circle at bottom left, rgba(34, 197, 94, 0.12), transparent 45%),
+        var(--bg);
+      color: var(--text);
+      padding: 18px 14px 60px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1140px;
+    }
+
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      border-radius: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .nav-link {
+      color: #cbd5e1;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.83rem;
+      padding: 7px 12px;
+      border-radius: 10px;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+    }
+
+    .nav-link.active {
+      background: linear-gradient(135deg, #2563eb, #16a34a);
+      color: #fff;
+      border-color: #60a5fa;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      font-size: 2rem;
+      font-weight: 900;
+      background: linear-gradient(90deg, #60a5fa, #34d399, #fb923c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 6px;
+    }
+
+    .toolbar {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    }
+
+    .search-sort-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 700px) {
+      .search-sort-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    input[type="text"], select {
+      background: var(--card-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 13px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    input[type="text"]:focus, select:focus {
+      border-color: var(--primary);
+    }
+
+    .refresh-btn {
+      background: var(--card-2);
+      color: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .refresh-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .categories-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .cat-btn {
+      background: var(--card-2);
+      color: #cbd5e1;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 13px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .cat-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .game-card {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .game-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+    }
+
+    .cover-box {
+      width: 100%;
+      height: 145px;
+      background: #091020;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .cover-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cat-badge {
+      position: absolute;
+      bottom: 8px;
+      right: 10px;
+      background: rgba(7, 11, 20, 0.86);
+      color: #93c5fd;
+      padding: 3px 9px;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .card-body {
+      padding: 14px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .game-title {
+      font-size: 1.02rem;
+      font-weight: 900;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .game-desc {
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 9px 10px;
+      font-size: 0.77rem;
+      color: #cbd5e1;
+    }
+
+    .meta-grid span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.7rem;
+    }
+
+    .download-btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      text-decoration: none;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+      font-weight: 900;
+      font-size: 0.88rem;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .download-btn.disabled {
+      background: var(--card-2);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      pointer-events: none;
+    }
+
+    .empty-box {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 18px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav-bar">
+      <span style="font-weight: 900;">4KL SUITE</span>
+      <div class="nav-links">
+        <a href="/" class="nav-link">الرئيسية</a>
+        <a href="/fps-booster" class="nav-link">4KL FPS BOOST</a>
+        <a href="/steam-games" class="nav-link">Steam Games</a>
+        <a href="/luatolls-games" class="nav-link active">LuaTolls Games Library</a>
+      </div>
+    </div>
+
+    <div class="header">
+      <div class="brand">LuaTolls Games Library</div>
+      <div class="subtitle">مكتبة ألعاب متاحة لجميع الزوار مع بحث، تصنيفات، ترتيب حسب الأحدث والأكثر تحميلاً، وتحديث تلقائي</div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-sort-row">
+        <input type="text" id="searchInput" placeholder="ابحث باسم اللعبة أو الوصف أو التصنيف..." />
+        <select id="sortSelect" aria-label="ترتيب الألعاب">
+          <option value="latest">الترتيب: الأحدث</option>
+          <option value="downloads">الترتيب: الأكثر تحميلاً</option>
+        </select>
+        <button type="button" class="refresh-btn" id="refreshBtn">تحديث الآن 🔄</button>
+      </div>
+
+      <div class="categories-row" id="categoriesRow">
+        <button type="button" class="cat-btn active" data-cat="all">الكل</button>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <span id="countText">جاري تحميل المكتبة...</span>
+      <span id="syncStatus">التحديث التلقائي مفعّل (كل 5 دقائق)</span>
+    </div>
+
+    <div class="games-grid" id="gamesGrid"></div>
+    <div class="empty-box" id="emptyBox" style="display:none;"></div>
+  </div>
+
+  <script>
+    let allGames = [];
+    let activeCategory = "all";
+
+    const gamesGrid = document.getElementById("gamesGrid");
+    const emptyBox = document.getElementById("emptyBox");
+    const searchInput = document.getElementById("searchInput");
+    const sortSelect = document.getElementById("sortSelect");
+    const categoriesRow = document.getElementById("categoriesRow");
+    const countText = document.getElementById("countText");
+    const syncStatus = document.getElementById("syncStatus");
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function isValidHttpUrl(url) {
+      try {
+        const u = new URL(url);
+        return u.protocol === "https:" || u.protocol === "http:";
+      } catch {
+        return false;
+      }
+    }
+
+    function rebuildCategories(games) {
+      const cats = Array.from(
+        new Set(games.map((g) => (g.category || "عام").trim()).filter(Boolean))
+      );
+
+      if (!cats.includes(activeCategory)) {
+        activeCategory = "all";
+      }
+
+      categoriesRow.innerHTML =
+        `<button type="button" class="cat-btn ${activeCategory === "all" ? "active" : ""}" data-cat="all">الكل</button>` +
+        cats
+          .map(
+            (c) =>
+              `<button type="button" class="cat-btn ${activeCategory === c ? "active" : ""}" data-cat="${escapeHtml(c)}">${escapeHtml(c)}</button>`
+          )
+          .join("");
+
+      categoriesRow.querySelectorAll(".cat-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          categoriesRow.querySelectorAll(".cat-btn").forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          activeCategory = btn.dataset.cat;
+          renderGames();
+        });
+      });
+    }
+
+    function getSortedAndFilteredGames() {
+      const q = searchInput.value.trim().toLowerCase();
+      const sortMode = sortSelect.value;
+
+      const list = allGames.filter((g) => {
+        const matchCat = activeCategory === "all" || g.category === activeCategory;
+        const matchQuery =
+          !q ||
+          g.title.toLowerCase().includes(q) ||
+          g.description.toLowerCase().includes(q) ||
+          g.category.toLowerCase().includes(q);
+        return matchCat && matchQuery;
+      });
+
+      list.sort((a, b) => {
+        if (sortMode === "downloads") {
+          return (Number(b.downloads) || 0) - (Number(a.downloads) || 0);
+        }
+        const timeA = Date.parse(a.updatedAt || "") || 0;
+        const timeB = Date.parse(b.updatedAt || "") || 0;
+        return timeB - timeA;
+      });
+
+      return list;
+    }
+
+    function renderGames() {
+      const filtered = getSortedAndFilteredGames();
+      countText.textContent = `عدد الألعاب المعروضة: ${filtered.length} من ${allGames.length}`;
+
+      if (!filtered.length) {
+        gamesGrid.innerHTML = "";
+        emptyBox.style.display = "block";
+        emptyBox.innerHTML = allGames.length
+          ? "لا توجد ألعاب مطابقة لخيارات البحث أو التصنيف الحالية."
+          : "لا توجد ألعاب محمّلة حالياً. تأكد من وجود بياناتك داخل <code>data/luatolls-games.json</code> ليتم عرضها تلقائياً.";
+        return;
+      }
+
+      emptyBox.style.display = "none";
+      gamesGrid.innerHTML = filtered
+        .map((g) => {
+          const safeTitle = escapeHtml(g.title);
+          const safeDesc = escapeHtml(g.description);
+          const safeCat = escapeHtml(g.category || "عام");
+          const safeSize = escapeHtml(g.size || "غير محدد");
+          const safeVersion = escapeHtml(g.version || "1.0");
+          const safeDownloads = Number(g.downloads || 0).toLocaleString();
+          const hasDownload = isValidHttpUrl(g.downloadUrl);
+          const hasCover = isValidHttpUrl(g.cover);
+
+          const coverHtml = hasCover
+            ? `<img src="${escapeHtml(g.cover)}" alt="${safeTitle}" loading="lazy" onerror="this.style.display='none';this.parentElement.textContent='لا يتوفر غلاف';" />`
+            : `<span>لا يتوفر غلاف</span>`;
+
+          const btnHtml = hasDownload
+            ? `<a class="download-btn" href="${escapeHtml(g.downloadUrl)}" target="_blank" rel="noopener noreferrer">Download</a>`
+            : `<button type="button" class="download-btn disabled" disabled>رابط التحميل غير متوفر</button>`;
+
+          return `
+            <article class="game-card">
+              <div class="cover-box">
+                ${coverHtml}
+                <span class="cat-badge">${safeCat}</span>
+              </div>
+              <div class="card-body">
+                <div>
+                  <h3 class="game-title">${safeTitle}</h3>
+                  <p class="game-desc">${safeDesc}</p>
+                </div>
+                <div>
+                  <div class="meta-grid" style="margin-bottom:10px;">
+                    <div><span>الحجم</span><strong>${safeSize}</strong></div>
+                    <div><span>الإصدار</span><strong>${safeVersion}</strong></div>
+                    <div><span>التحميلات</span><strong>${safeDownloads}</strong></div>
+                    <div><span>التحديث</span><strong>${escapeHtml(g.updatedAt || "-")}</strong></div>
+                  </div>
+                  ${btnHtml}
+                </div>
+              </div>
+            </article>
+          `;
+        })
+        .join("");
+    }
+
+    async function loadGamesFromBackend() {
+      syncStatus.textContent = "جاري مزامنة القائمة...";
+      try {
+        const res = await fetch("/api/luatolls/games", { cache: "no-store" });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "خطأ في جلب البيانات");
+        }
+        allGames = Array.isArray(data.games) ? data.games : [];
+        rebuildCategories(allGames);
+        renderGames();
+        const timeStr = new Date().toLocaleTimeString("ar-SA");
+        syncStatus.textContent = `آخر تحديث تلقائي: ${timeStr} (كل 5 دقائق)`;
+      } catch (err) {
+        syncStatus.textContent = "تعذر التحديث التلقائي حالياً";
+        if (!allGames.length) {
+          gamesGrid.innerHTML = "";
+          emptyBox.style.display = "block";
+          emptyBox.textContent = err.message || "حدث خطأ أثناء تحميل مكتبة الألعاب.";
+        }
+      }
+    }
+
+    searchInput.addEventListener("input", renderGames);
+    sortSelect.addEventListener("change", renderGames);
+    document.getElementById("refreshBtn").addEventListener("click", loadGamesFromBackend);
+
+    loadGamesFromBackend();
+    setInterval(loadGamesFromBackend, 5 * 60 * 1000);
+  </script>
+</body>
+</html>
