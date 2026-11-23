@@ -1,0 +1,26 @@
+[
+  {
+    "id": "game-1",
+    "title": "اسم اللعبة الأولى",
+    "description": "وصف مختصر للعبة وأسلوب لعبها.",
+    "cover": "https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg",
+    "size": "45 GB",
+    "version": "1.0.0",
+    "category": "أكشن",
+    "downloads": 1250,
+    "updatedAt": "2026-11-20",
+    "downloadUrl": "https://example.com/official-download-link"
+  },
+  {
+    "id": "game-2",
+    "title": "اسم اللعبة الثانية",
+    "description": "وصف مختصر للعبة الثانية.",
+    "cover": "https://cdn.cloudflare.steamstatic.com/steam/apps/570/header.jpg",
+    "size": "30 GB",
+    "version": "2.1.0",
+    "category": "مغامرات",
+    "downloads": 890,
+    "updatedAt": "2026-11-22",
+    "downloadUrl": "https://example.com/official-download-link-2"
+  }
+]
