@@ -16,6 +16,7 @@ if (!fs.existsSync(downloadsDir)) {
   fs.mkdirSync(downloadsDir, { recursive: true });
 }
 
+// تنظيف دوري للملفات المؤقتة الأقدم من 15 دقيقة
 setInterval(() => {
   fs.readdir(downloadsDir, (err, files) => {
     if (err || !files) return;
@@ -113,7 +114,6 @@ function buildCombinedFfmpegFilters(resolution, fps, sourceFps = 30) {
     );
   }
 
-  // إضافة 4 فريمات بين كل فريمين = ضرب الفريمات في 5 (مع سقف أمان 240fps)
   if (fps === "interp4") {
     const baseFps = Math.max(15, Math.min(60, Number(sourceFps) || 30));
     const targetFps = Math.min(240, Math.round(baseFps * 5));
@@ -170,8 +170,20 @@ app.get("/", (req, res) => {
   res.status(404).send("index.html not found");
 });
 
+app.get("/fps-booster", (req, res) => {
+  const publicFps = path.join(__dirname, "public", "fps-booster.html");
+  const rootFps = path.join(__dirname, "fps-booster.html");
+  if (fs.existsSync(publicFps)) {
+    return res.sendFile(publicFps);
+  }
+  if (fs.existsSync(rootFps)) {
+    return res.sendFile(rootFps);
+  }
+  res.status(404).send("fps-booster.html not found");
+});
+
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", service: "SaveFBS Downloader", timestamp: new Date().toISOString() });
+  res.json({ status: "ok", service: "SaveFBS Downloader & 4KL FPS BOOST", timestamp: new Date().toISOString() });
 });
 
 app.post("/api/fetch-video", (req, res) => {
@@ -215,7 +227,9 @@ app.get("/api/download", (req, res) => {
   const fps = (req.query.fps || "auto").toLowerCase();
   const customTitle = sanitizeFilename(req.query.title || "SaveFBS");
 
-  if (!videoUrl) return res.status(400).send("الرابط مطلوب");
+  if (!videoUrl || !/^https?:\/\//i.test(videoUrl)) {
+    return res.status(400).send("رابط الفيديو غير صالح أو مفقود");
+  }
 
   const stamp = Date.now();
 
