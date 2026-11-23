@@ -1,11 +1,41 @@
+const express = require("express");
+const fs = require("fs");
+const path = require("path");
+
+const app = express();
+const PORT = process.env.PORT || 3000;
 const LUATOLLS_PASSWORD = process.env.LUATOLLS_ACCESS_PASSWORD || "4KL2026";
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+const publicDir = path.join(__dirname, "public");
+if (fs.existsSync(publicDir)) {
+  app.use(express.static(publicDir));
+}
+
+function sendHtmlFile(res, filename) {
+  const inPublic = path.join(__dirname, "public", filename);
+  const inRoot = path.join(__dirname, filename);
+  if (fs.existsSync(inPublic)) return res.sendFile(inPublic);
+  if (fs.existsSync(inRoot)) return res.sendFile(inRoot);
+  return res.status(404).send(`${filename} not found`);
+}
+
+app.get("/", (req, res) => {
+  sendHtmlFile(res, "index.html");
+});
+
+app.get("/fps-booster", (req, res) => {
+  sendHtmlFile(res, "fps-booster.html");
+});
+
+app.get("/steam-games", (req, res) => {
+  sendHtmlFile(res, "steam-games.html");
+});
+
 app.get("/luatolls-games", (req, res) => {
-  const publicPage = path.join(__dirname, "public", "luatolls-games.html");
-  const rootPage = path.join(__dirname, "luatolls-games.html");
-  if (fs.existsSync(publicPage)) return res.sendFile(publicPage);
-  if (fs.existsSync(rootPage)) return res.sendFile(rootPage);
-  res.status(404).send("luatolls-games.html not found");
+  sendHtmlFile(res, "luatolls-games.html");
 });
 
 app.post("/api/luatolls/unlock", (req, res) => {
@@ -27,12 +57,16 @@ function isSafeOriginalUrl(urlStr) {
 }
 
 function normalizeGameItem(raw, index = 0) {
-  const originalDownloadUrl = isSafeOriginalUrl(raw.downloadUrl || raw.download_url || raw.url)
-    ? (raw.downloadUrl || raw.download_url || raw.url).trim()
+  const originalDownloadUrl = isSafeOriginalUrl(
+    raw.downloadUrl || raw.download_url || raw.url
+  )
+    ? String(raw.downloadUrl || raw.download_url || raw.url).trim()
     : "";
 
-  const coverUrl = isSafeOriginalUrl(raw.cover || raw.coverUrl || raw.image || raw.thumbnail)
-    ? (raw.cover || raw.coverUrl || raw.image || raw.thumbnail).trim()
+  const coverUrl = isSafeOriginalUrl(
+    raw.cover || raw.coverUrl || raw.image || raw.thumbnail
+  )
+    ? String(raw.cover || raw.coverUrl || raw.image || raw.thumbnail).trim()
     : "";
 
   return {
@@ -44,7 +78,9 @@ function normalizeGameItem(raw, index = 0) {
     version: String(raw.version || raw.ver || "1.0").trim(),
     category: String(raw.category || raw.genre || "عام").trim(),
     downloads: Number(raw.downloads ?? raw.downloadCount ?? 0) || 0,
-    updatedAt: String(raw.updatedAt || raw.releaseDate || raw.date || "2026-11-23").trim(),
+    updatedAt: String(
+      raw.updatedAt || raw.releaseDate || raw.date || "2026-11-23"
+    ).trim(),
     downloadUrl: originalDownloadUrl
   };
 }
@@ -59,12 +95,17 @@ app.get("/api/luatolls/games", async (req, res) => {
       if (process.env.LUATOLLS_API_KEY) {
         headers.Authorization = `Bearer ${process.env.LUATOLLS_API_KEY}`;
       }
+
       const response = await fetch(feedUrl, { headers });
-      if (!response.ok) throw new Error(`Status ${response.status}`);
+      if (!response.ok) {
+        throw new Error(`Status ${response.status}`);
+      }
+
       const payload = await response.json();
       const rawList = Array.isArray(payload)
         ? payload
         : payload.games || payload.data || payload.items || [];
+
       return res.json({
         updatedAt: new Date().toISOString(),
         games: rawList.map((item, idx) => normalizeGameItem(item, idx))
@@ -82,6 +123,17 @@ app.get("/api/luatolls/games", async (req, res) => {
 
     return res.json({ updatedAt: new Date().toISOString(), games: [] });
   } catch (err) {
-    return res.status(502).json({ error: "تعذر جلب قائمة الألعاب حالياً", details: err.message });
+    return res
+      .status(502)
+      .json({ error: "تعذر جلب قائمة الألعاب حالياً", details: err.message });
   }
+});
+
+app.use((err, req, res, next) => {
+  console.error("Server error:", err);
+  res.status(500).json({ error: "حدث خطأ غير متوقع في الخادم" });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
