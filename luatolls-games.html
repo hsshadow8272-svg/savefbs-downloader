@@ -14,7 +14,7 @@
       --muted: #94a3b8;
       --primary: #3b82f6;
       --accent: #22c55e;
-      --fire: #f97316;
+      --danger: #ef4444;
     }
 
     * {
@@ -96,13 +96,67 @@
       margin-top: 6px;
     }
 
-    .toolbar {
-      background: rgba(15, 23, 42, 0.92);
+    .gate-card, .toolbar {
+      background: rgba(15, 23, 42, 0.94);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 18px;
+      padding: 20px;
       margin-bottom: 18px;
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    }
+
+    .gate-box {
+      max-width: 440px;
+      margin: 12px auto;
+      text-align: center;
+    }
+
+    .pass-input {
+      width: 100%;
+      background: var(--card-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      margin: 12px 0;
+      outline: none;
+      text-align: center;
+    }
+
+    .pass-input:focus {
+      border-color: var(--primary);
+    }
+
+    .unlock-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #2563eb, #16a34a);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .lock-top-btn {
+      background: var(--card-2);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .err-msg {
+      color: #f87171;
+      font-size: 0.84rem;
+      font-weight: 700;
+      margin-top: 8px;
+      min-height: 20px;
     }
 
     .search-sort-row {
@@ -128,10 +182,6 @@
       outline: none;
     }
 
-    input[type="text"]:focus, select:focus {
-      border-color: var(--primary);
-    }
-
     .refresh-btn {
       background: var(--card-2);
       color: #f8fafc;
@@ -141,10 +191,6 @@
       font-size: 0.84rem;
       font-weight: 800;
       cursor: pointer;
-    }
-
-    .refresh-btn:hover {
-      border-color: var(--accent);
     }
 
     .categories-row {
@@ -246,7 +292,6 @@
       font-size: 1.02rem;
       font-weight: 900;
       margin-bottom: 6px;
-      color: var(--text);
     }
 
     .game-desc {
@@ -317,40 +362,73 @@
         <a href="/steam-games" class="nav-link">Steam Games</a>
         <a href="/luatolls-games" class="nav-link active">LuaTolls Games Library</a>
       </div>
+      <button type="button" class="lock-top-btn" id="lockBtn" style="display:none;">قفل المكتبة 🔒</button>
     </div>
 
     <div class="header">
       <div class="brand">LuaTolls Games Library</div>
-      <div class="subtitle">مكتبة ألعاب متاحة لجميع الزوار مع بحث، تصنيفات، ترتيب حسب الأحدث والأكثر تحميلاً، وتحديث تلقائي</div>
+      <div class="subtitle">دخول محمي بكلمة مرور لعرض وتحميل ألعابك الحقيقية</div>
     </div>
 
-    <div class="toolbar">
-      <div class="search-sort-row">
-        <input type="text" id="searchInput" placeholder="ابحث باسم اللعبة أو الوصف أو التصنيف..." />
-        <select id="sortSelect" aria-label="ترتيب الألعاب">
-          <option value="latest">الترتيب: الأحدث</option>
-          <option value="downloads">الترتيب: الأكثر تحميلاً</option>
-        </select>
-        <button type="button" class="refresh-btn" id="refreshBtn">تحديث الآن 🔄</button>
+    <!-- واجهة الدخول بكلمة المرور -->
+    <div class="gate-card" id="gateCard">
+      <div class="gate-box">
+        <h2 style="font-size:1.2rem;font-weight:900;margin-bottom:8px;">المكتبة مقفلة 🔒</h2>
+        <p style="color:var(--muted);font-size:0.86rem;line-height:1.6;">
+          اضغط على الزر أدناه وأدخل كلمة المرور لفتح مكتبة الألعاب والوصول إلى التحميل.
+        </p>
+        <button type="button" class="unlock-btn" id="openPassPromptBtn" style="margin-top:14px;">
+          إدخال كلمة المرور وفتح المكتبة
+        </button>
+
+        <form id="passForm" style="display:none;margin-top:12px;">
+          <input type="password" class="pass-input" id="passwordInput" placeholder="اكتب كلمة المرور هنا..." required />
+          <button type="submit" class="unlock-btn">تأكيد كلمة المرور والدخول</button>
+          <div class="err-msg" id="passError"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- محتوى المكتبة بعد التحقق من كلمة المرور -->
+    <div id="libraryContent" style="display:none;">
+      <div class="toolbar">
+        <div class="search-sort-row">
+          <input type="text" id="searchInput" placeholder="ابحث باسم اللعبة أو الوصف أو التصنيف..." />
+          <select id="sortSelect">
+            <option value="latest">الترتيب: الأحدث</option>
+            <option value="downloads">الترتيب: الأكثر تحميلاً</option>
+          </select>
+          <button type="button" class="refresh-btn" id="refreshBtn">تحديث الآن 🔄</button>
+        </div>
+
+        <div class="categories-row" id="categoriesRow">
+          <button type="button" class="cat-btn active" data-cat="all">الكل</button>
+        </div>
       </div>
 
-      <div class="categories-row" id="categoriesRow">
-        <button type="button" class="cat-btn active" data-cat="all">الكل</button>
+      <div class="status-bar">
+        <span id="countText">جاري تحميل المكتبة...</span>
+        <span id="syncStatus">التحديث التلقائي مفعّل (كل 5 دقائق)</span>
       </div>
-    </div>
 
-    <div class="status-bar">
-      <span id="countText">جاري تحميل المكتبة...</span>
-      <span id="syncStatus">التحديث التلقائي مفعّل (كل 5 دقائق)</span>
+      <div class="games-grid" id="gamesGrid"></div>
+      <div class="empty-box" id="emptyBox" style="display:none;"></div>
     </div>
-
-    <div class="games-grid" id="gamesGrid"></div>
-    <div class="empty-box" id="emptyBox" style="display:none;"></div>
   </div>
 
   <script>
+    const SESSION_KEY = "luatolls_unlocked_v1";
     let allGames = [];
     let activeCategory = "all";
+    let autoRefreshTimer = null;
+
+    const gateCard = document.getElementById("gateCard");
+    const libraryContent = document.getElementById("libraryContent");
+    const lockBtn = document.getElementById("lockBtn");
+    const openPassPromptBtn = document.getElementById("openPassPromptBtn");
+    const passForm = document.getElementById("passForm");
+    const passwordInput = document.getElementById("passwordInput");
+    const passError = document.getElementById("passError");
 
     const gamesGrid = document.getElementById("gamesGrid");
     const emptyBox = document.getElementById("emptyBox");
@@ -359,6 +437,52 @@
     const categoriesRow = document.getElementById("categoriesRow");
     const countText = document.getElementById("countText");
     const syncStatus = document.getElementById("syncStatus");
+
+    openPassPromptBtn.addEventListener("click", () => {
+      passForm.style.display = "block";
+      passwordInput.focus();
+    });
+
+    passForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      passError.textContent = "جاري التحقق...";
+      try {
+        const res = await fetch("/api/luatolls/unlock", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: passwordInput.value })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+          passError.textContent = data.error || "كلمة المرور غير صحيحة";
+          return;
+        }
+        sessionStorage.setItem(SESSION_KEY, "1");
+        passError.textContent = "";
+        passwordInput.value = "";
+        showUnlockedLibrary();
+      } catch {
+        passError.textContent = "تعذر التحقق من كلمة المرور حالياً";
+      }
+    });
+
+    lockBtn.addEventListener("click", () => {
+      sessionStorage.removeItem(SESSION_KEY);
+      if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+      libraryContent.style.display = "none";
+      lockBtn.style.display = "none";
+      gateCard.style.display = "block";
+      passForm.style.display = "none";
+    });
+
+    function showUnlockedLibrary() {
+      gateCard.style.display = "none";
+      libraryContent.style.display = "block";
+      lockBtn.style.display = "inline-block";
+      loadGamesFromBackend();
+      if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+      autoRefreshTimer = setInterval(loadGamesFromBackend, 5 * 60 * 1000);
+    }
 
     function escapeHtml(str) {
       return String(str || "")
@@ -381,10 +505,7 @@
       const cats = Array.from(
         new Set(games.map((g) => (g.category || "عام").trim()).filter(Boolean))
       );
-
-      if (!cats.includes(activeCategory)) {
-        activeCategory = "all";
-      }
+      if (!cats.includes(activeCategory)) activeCategory = "all";
 
       categoriesRow.innerHTML =
         `<button type="button" class="cat-btn ${activeCategory === "all" ? "active" : ""}" data-cat="all">الكل</button>` +
@@ -423,9 +544,7 @@
         if (sortMode === "downloads") {
           return (Number(b.downloads) || 0) - (Number(a.downloads) || 0);
         }
-        const timeA = Date.parse(a.updatedAt || "") || 0;
-        const timeB = Date.parse(b.updatedAt || "") || 0;
-        return timeB - timeA;
+        return (Date.parse(b.updatedAt || "") || 0) - (Date.parse(a.updatedAt || "") || 0);
       });
 
       return list;
@@ -439,8 +558,8 @@
         gamesGrid.innerHTML = "";
         emptyBox.style.display = "block";
         emptyBox.innerHTML = allGames.length
-          ? "لا توجد ألعاب مطابقة لخيارات البحث أو التصنيف الحالية."
-          : "لا توجد ألعاب محمّلة حالياً. تأكد من وجود بياناتك داخل <code>data/luatolls-games.json</code> ليتم عرضها تلقائياً.";
+          ? "لا توجد ألعاب مطابقة للبحث أو التصنيف."
+          : "لا توجد ألعاب في <code>data/luatolls-games.json</code> حالياً. أضف بيانات ألعابك الحقيقية في الملف ليتم عرضها هنا.";
         return;
       }
 
@@ -492,25 +611,19 @@
     }
 
     async function loadGamesFromBackend() {
-      syncStatus.textContent = "جاري مزامنة القائمة...";
+      syncStatus.textContent = "جاري تحديث القائمة...";
       try {
         const res = await fetch("/api/luatolls/games", { cache: "no-store" });
         const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.error || "خطأ في جلب البيانات");
-        }
+        if (!res.ok) throw new Error(data.error || "خطأ في التحميل");
         allGames = Array.isArray(data.games) ? data.games : [];
         rebuildCategories(allGames);
         renderGames();
-        const timeStr = new Date().toLocaleTimeString("ar-SA");
-        syncStatus.textContent = `آخر تحديث تلقائي: ${timeStr} (كل 5 دقائق)`;
+        syncStatus.textContent = `آخر تحديث: ${new Date().toLocaleTimeString("ar-SA")} (كل 5 دقائق)`;
       } catch (err) {
-        syncStatus.textContent = "تعذر التحديث التلقائي حالياً";
-        if (!allGames.length) {
-          gamesGrid.innerHTML = "";
-          emptyBox.style.display = "block";
-          emptyBox.textContent = err.message || "حدث خطأ أثناء تحميل مكتبة الألعاب.";
-        }
+        syncStatus.textContent = "تعذر التحديث التلقائي";
+        emptyBox.style.display = "block";
+        emptyBox.textContent = err.message || "حدث خطأ أثناء تحميل المكتبة.";
       }
     }
 
@@ -518,8 +631,9 @@
     sortSelect.addEventListener("change", renderGames);
     document.getElementById("refreshBtn").addEventListener("click", loadGamesFromBackend);
 
-    loadGamesFromBackend();
-    setInterval(loadGamesFromBackend, 5 * 60 * 1000);
+    if (sessionStorage.getItem(SESSION_KEY) === "1") {
+      showUnlockedLibrary();
+    }
   </script>
 </body>
 </html>
