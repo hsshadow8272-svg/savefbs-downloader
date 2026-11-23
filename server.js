@@ -13,26 +13,46 @@ app.use(express.static(__dirname));
 const PORT = process.env.PORT || 3000;
 const downloadsDir = path.join(__dirname, "downloads");
 if (!fs.existsSync(downloadsDir)) {
-  fs.mkdirSync(downloadsDir);
+  fs.mkdirSync(downloadsDir, { recursive: true });
 }
 
 function buildFormatSelector(preset) {
   switch (preset) {
     case "8k":
-      return "bestvideo[height<=4320][ext=mp4]+bestaudio[ext=m4a]/best[height<=4320]/best";
+      return "bestvideo[height<=4320]+bestaudio/best[height<=4320]/best";
     case "4k":
-      return "bestvideo[height<=2160][ext=mp4]+bestaudio[ext=m4a]/best[height<=2160]/best";
+      return "bestvideo[height<=2160]+bestaudio/best[height<=2160]/best";
     case "2k":
-      return "bestvideo[height<=1440][ext=mp4]+bestaudio[ext=m4a]/best[height<=1440]/best";
+      return "bestvideo[height<=1440]+bestaudio/best[height<=1440]/best";
     case "1080p":
-      return "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080]/best";
+      return "bestvideo[height<=1080]+bestaudio/best[height<=1080]/best";
     case "120fps":
-      return "bestvideo[fps>=100][ext=mp4]+bestaudio[ext=m4a]/bestvideo[ext=mp4]+bestaudio[ext=m4a]/best";
+      return "bestvideo[fps>=100]+bestaudio/bestvideo[fps>=60]+bestaudio/bestvideo+bestaudio/best";
     case "60fps":
-      return "bestvideo[fps>=50][ext=mp4]+bestaudio[ext=m4a]/bestvideo[ext=mp4]+bestaudio[ext=m4a]/best";
+      return "bestvideo[fps>=50]+bestaudio/bestvideo[fps>=30]+bestaudio/bestvideo+bestaudio/best";
     default:
-      return "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best";
+      return "bestvideo+bestaudio/best";
   }
+}
+
+function buildFfmpegFilters(quality) {
+  const filters = [];
+
+  if (quality === "8k") {
+    filters.push("scale=7680:4320:force_original_aspect_ratio=decrease,pad=7680:4320:(ow-iw)/2:(oh-ih)/2");
+  } else if (quality === "4k") {
+    filters.push("scale=3840:2160:force_original_aspect_ratio=decrease,pad=3840:2160:(ow-iw)/2:(oh-ih)/2");
+  } else if (quality === "2k") {
+    filters.push("scale=2560:1440:force_original_aspect_ratio=decrease,pad=2560:1440:(ow-iw)/2:(oh-ih)/2");
+  }
+
+  if (quality === "120fps") {
+    filters.push("minterpolate=fps=120:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1");
+  } else if (quality === "60fps") {
+    filters.push("fps=60");
+  }
+
+  return filters;
 }
 
 function runYtDlpWithFallback(baseArgs, url, callback) {
@@ -55,7 +75,10 @@ function runYtDlpWithFallback(baseArgs, url, callback) {
       if (!err2) {
         return callback(null, stdout2, stderr2);
       }
-      const combinedErr = `${stderr || ""}\n${stderr2 || ""}`.trim() || (err2 && err2.message) || (err && err.message);
+      const combinedErr =
+        `${stderr || ""}\n${stderr2 || ""}`.trim() ||
+        (err2 && err2.message) ||
+        (err && err.message);
       callback(err2 || err, stdout2 || stdout, combinedErr);
     });
   });
@@ -106,22 +129,63 @@ app.get("/api/download", (req, res) => {
   const quality = req.query.quality || "best";
   if (!videoUrl) return res.status(400).send("الرابط مطلوب");
 
-  const fileName = `SaveFBS_${quality}_${Date.now()}.mp4`;
-  const filePath = path.join(downloadsDir, fileName);
+  const stamp = Date.now();
+  const rawFilePath = path.join(downloadsDir, `raw_${quality}_${stamp}.mp4`);
+  const finalFileName = `SaveFBS_${quality}_${stamp}.mp4`;
+  const finalFilePath = path.join(downloadsDir, finalFileName);
   const formatSelector = buildFormatSelector(quality);
+  const vfFilters = buildFfmpegFilters(quality);
 
   runYtDlpWithFallback(
-    ["-f", formatSelector, "--merge-output-format", "mp4", "--no-playlist", "-o", filePath],
+    ["-f", formatSelector, "--merge-output-format", "mp4", "--no-playlist", "-o", rawFilePath],
     videoUrl,
     (err, stdout, stderr) => {
-      if (err || !fs.existsSync(filePath)) {
+      if (err || !fs.existsSync(rawFilePath)) {
         console.error("yt-dlp download error:", stderr || (err && err.message));
         return res.status(500).send("فشل تحميل الفيديو بالجودة المطلوبة");
       }
 
-      res.setHeader("Content-Type", "video/mp4");
-      res.download(filePath, fileName, () => {
-        fs.unlink(filePath, () => {});
+      if (vfFilters.length === 0) {
+        res.setHeader("Content-Type", "video/mp4");
+        return res.download(rawFilePath, finalFileName, () => {
+          fs.unlink(rawFilePath, () => {});
+        });
+      }
+
+      const ffmpegArgs = [
+        "-y",
+        "-i",
+        rawFilePath,
+        "-vf",
+        vfFilters.join(","),
+        "-c:v",
+        "libx264",
+        "-preset",
+        "ultrafast",
+        "-crf",
+        "20",
+        "-pix_fmt",
+        "yuv420p",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "192k",
+        "-movflags",
+        "+faststart",
+        finalFilePath,
+      ];
+
+      execFile("ffmpeg", ffmpegArgs, (ffErr, ffStdout, ffStderr) => {
+        fs.unlink(rawFilePath, () => {});
+        if (ffErr || !fs.existsSync(finalFilePath)) {
+          console.error("ffmpeg processing error:", ffStderr || (ffErr && ffErr.message));
+          return res.status(500).send("فشل معالجة الفيديو بالدقة أو الفريمات المطلوبة");
+        }
+
+        res.setHeader("Content-Type", "video/mp4");
+        res.download(finalFilePath, finalFileName, () => {
+          fs.unlink(finalFilePath, () => {});
+        });
       });
     }
   );
