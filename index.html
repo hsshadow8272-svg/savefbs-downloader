@@ -13,10 +13,7 @@
       --text: #f8fafc;
       --muted: #94a3b8;
       --primary: #3b82f6;
-      --primary-hover: #2563eb;
       --accent: #22c55e;
-      --warn: #f59e0b;
-      --danger: #ef4444;
     }
 
     * {
@@ -40,7 +37,7 @@
 
     .container {
       width: 100%;
-      max-width: 640px;
+      max-width: 660px;
     }
 
     .header {
@@ -49,12 +46,8 @@
     }
 
     .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
       font-size: 1.7rem;
       font-weight: 800;
-      letter-spacing: 0.3px;
     }
 
     .badge-row {
@@ -94,11 +87,10 @@
     .input-group {
       display: flex;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
-    input[type="url"],
-    select {
+    input[type="url"] {
       width: 100%;
       background: var(--card-2);
       color: var(--text);
@@ -107,11 +99,9 @@
       padding: 13px 14px;
       font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
-    input[type="url"]:focus,
-    select:focus {
+    input[type="url"]:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
     }
@@ -126,21 +116,24 @@
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
-      transition: background 0.2s, border-color 0.2s;
     }
 
     .mini-btn:hover {
       background: #1e2d4d;
-      border-color: rgba(148, 163, 184, 0.35);
     }
 
-    .preset-section {
-      margin: 14px 0;
+    .group-box {
+      margin: 12px 0;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(22, 32, 56, 0.55);
+      border: 1px solid var(--border);
     }
 
-    .preset-label {
-      font-size: 0.8rem;
-      color: var(--muted);
+    .group-title {
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      font-weight: 700;
       margin-bottom: 8px;
       display: block;
     }
@@ -175,6 +168,13 @@
       box-shadow: 0 6px 18px rgba(59, 130, 246, 0.35);
     }
 
+    .selection-summary {
+      margin-top: 10px;
+      font-size: 0.84rem;
+      color: #93c5fd;
+      font-weight: 700;
+    }
+
     .primary-btn {
       width: 100%;
       background: linear-gradient(135deg, #3b82f6, #2563eb);
@@ -185,12 +185,7 @@
       font-size: 1rem;
       font-weight: 800;
       cursor: pointer;
-      transition: transform 0.15s, opacity 0.2s;
-      margin-top: 6px;
-    }
-
-    .primary-btn:hover:not(:disabled) {
-      transform: translateY(-1px);
+      margin-top: 8px;
     }
 
     .primary-btn:disabled {
@@ -209,11 +204,6 @@
       font-weight: 800;
       cursor: pointer;
       margin-top: 12px;
-      transition: transform 0.15s, opacity 0.2s;
-    }
-
-    .download-btn:hover:not(:disabled) {
-      transform: translateY(-1px);
     }
 
     .download-btn:disabled {
@@ -225,7 +215,7 @@
       margin-top: 12px;
       padding: 11px 13px;
       border-radius: 12px;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       line-height: 1.5;
       display: none;
     }
@@ -336,7 +326,6 @@
       align-items: center;
       gap: 10px;
       cursor: pointer;
-      transition: border-color 0.2s;
     }
 
     .history-item:hover {
@@ -373,7 +362,7 @@
       <div class="brand">SaveFBS Downloader</div>
       <div class="badge-row">
         <span class="badge green">iOS MP4 جاهز</span>
-        <span class="badge">فيديو + صوت MP3</span>
+        <span class="badge">دمج الدقة + الفريمات</span>
         <span class="badge" id="serverStatus">جاري فحص السيرفر...</span>
       </div>
     </div>
@@ -385,30 +374,28 @@
         <button class="mini-btn" type="button" id="clearBtn">مسح</button>
       </div>
 
-      <div class="preset-section">
-        <span class="preset-label">اختر الجودة أو الفريمات أو الصوت:</span>
-        <div class="chips" id="presetChips">
-          <button type="button" class="chip active" data-value="best">تلقائي (الأفضل)</button>
-          <button type="button" class="chip" data-value="1080p">1080p Full HD</button>
-          <button type="button" class="chip" data-value="2k">2K</button>
-          <button type="button" class="chip" data-value="4k">4K</button>
-          <button type="button" class="chip" data-value="8k">8K (معالجة)</button>
-          <button type="button" class="chip" data-value="60fps">60fps</button>
-          <button type="button" class="chip" data-value="120fps">120fps (معالجة)</button>
-          <button type="button" class="chip" data-value="audio">صوت MP3 فقط</button>
+      <div class="group-box">
+        <span class="group-title">1) اختر الدقة (أو صوت MP3):</span>
+        <div class="chips" id="resChips">
+          <button type="button" class="chip active" data-res="best">تلقائي</button>
+          <button type="button" class="chip" data-res="1080p">1080p</button>
+          <button type="button" class="chip" data-res="2k">2K</button>
+          <button type="button" class="chip" data-res="4k">4K</button>
+          <button type="button" class="chip" data-res="8k">8K</button>
+          <button type="button" class="chip" data-res="audio">صوت MP3 فقط</button>
         </div>
       </div>
 
-      <select id="qualitySelect" aria-label="اختيار الجودة">
-        <option value="best">تلقائي — أعلى جودة متاحة (MP4)</option>
-        <option value="1080p">1080p Full HD (MP4)</option>
-        <option value="2k">2K — 1440p (MP4)</option>
-        <option value="4k">4K — 2160p (MP4)</option>
-        <option value="8k">8K — 4320p (تحجيم عبر FFmpeg)</option>
-        <option value="60fps">60fps — إطارات عالية</option>
-        <option value="120fps">120fps — توليد إطارات (تحجيم/معالجة)</option>
-        <option value="audio">صوت فقط (MP3)</option>
-      </select>
+      <div class="group-box" id="fpsGroup">
+        <span class="group-title">2) اختر الفريمات (يمكن دمجها مع الدقة):</span>
+        <div class="chips" id="fpsChips">
+          <button type="button" class="chip active" data-fps="auto">تلقائي</button>
+          <button type="button" class="chip" data-fps="60fps">60fps</button>
+          <button type="button" class="chip" data-fps="120fps">120fps</button>
+          <button type="button" class="chip" data-fps="interp4">+4 فريمات بين كل فريم</button>
+        </div>
+        <div class="selection-summary" id="selectionSummary">الاختيار الحالي: دقة (تلقائي) + فريمات (تلقائي)</div>
+      </div>
 
       <button class="primary-btn" id="fetchBtn" type="button">جلب وتحليل الفيديو</button>
 
@@ -448,8 +435,10 @@
     const urlInput = document.getElementById("urlInput");
     const pasteBtn = document.getElementById("pasteBtn");
     const clearBtn = document.getElementById("clearBtn");
-    const qualitySelect = document.getElementById("qualitySelect");
-    const chips = Array.from(document.querySelectorAll("#presetChips .chip"));
+    const resChips = Array.from(document.querySelectorAll("#resChips .chip"));
+    const fpsChips = Array.from(document.querySelectorAll("#fpsChips .chip"));
+    const fpsGroup = document.getElementById("fpsGroup");
+    const selectionSummary = document.getElementById("selectionSummary");
     const fetchBtn = document.getElementById("fetchBtn");
     const downloadBtn = document.getElementById("downloadBtn");
     const previewBox = document.getElementById("previewBox");
@@ -460,8 +449,10 @@
     const clearHistoryBtn = document.getElementById("clearHistoryBtn");
     const serverStatus = document.getElementById("serverStatus");
 
+    let selectedRes = "best";
+    let selectedFps = "auto";
     let currentVideoData = null;
-    const HISTORY_KEY = "savefbs_history_v2";
+    const HISTORY_KEY = "savefbs_history_v3";
 
     function showAlert(el, msg) {
       if (!msg) {
@@ -481,42 +472,42 @@
       return `${m}:${String(r).padStart(2, "0")}`;
     }
 
-    function syncPresetUI(value) {
-      qualitySelect.value = value;
-      chips.forEach((chip) => {
-        chip.classList.toggle("active", chip.dataset.value === value);
-      });
-      evaluateQualityWarning();
-    }
+    function updateSummaryAndWarnings() {
+      if (selectedRes === "audio") {
+        fpsGroup.style.opacity = "0.5";
+        selectionSummary.textContent = "الاختيار الحالي: صوت MP3 فقط";
+      } else {
+        fpsGroup.style.opacity = "1";
+        const fpsLabel =
+          selectedFps === "interp4" ? "+4 فريمات بين كل فريم (×5)" : selectedFps;
+        selectionSummary.textContent = `الاختيار الحالي: دقة (${selectedRes}) + فريمات (${fpsLabel})`;
+      }
 
-    function evaluateQualityWarning() {
-      const selected = qualitySelect.value;
-      if (selected === "8k" || selected === "120fps") {
+      if (selectedRes !== "audio" && (selectedRes === "8k" || selectedFps === "120fps" || selectedFps === "interp4")) {
         showAlert(
           warnBox,
-          "تنبيه: خيارات 8K و 120fps تعتمد على التحجيم والمعالجة عبر FFmpeg ولا تخلق تفاصيل أصلية غير موجودة في الفيديو، وقد تستغرق وقتاً أطول على السيرفر."
+          "ملاحظة: معالجة 8K أو توليد الإطارات البينية تضخّم أبعاد/معدل إطارات الملف عبر FFmpeg، لكنها لا تولّد تفاصيل أو إطارات أصلية غير موجودة في الفيديو، وقد تستغرق وقتاً طويلاً على السيرفر."
         );
-      } else if (currentVideoData && currentVideoData.sourceHeight) {
-        const targetMap = { "1080p": 1080, "2k": 1440, "4k": 2160, "8k": 4320 };
-        const targetH = targetMap[selected];
-        if (targetH && currentVideoData.sourceHeight < targetH) {
-          showAlert(
-            warnBox,
-            `أعلى دقة متوفرة في المصدر هي ${currentVideoData.sourceHeight}p، لذلك لن تظهر تفاصيل أعلى من أصل الفيديو.`
-          );
-          return;
-        }
-        showAlert(warnBox, "");
       } else {
         showAlert(warnBox, "");
       }
     }
 
-    chips.forEach((chip) => {
-      chip.addEventListener("click", () => syncPresetUI(chip.dataset.value));
+    resChips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        selectedRes = chip.dataset.res;
+        resChips.forEach((c) => c.classList.toggle("active", c === chip));
+        updateSummaryAndWarnings();
+      });
     });
 
-    qualitySelect.addEventListener("change", () => syncPresetUI(qualitySelect.value));
+    fpsChips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        selectedFps = chip.dataset.fps;
+        fpsChips.forEach((c) => c.classList.toggle("active", c === chip));
+        updateSummaryAndWarnings();
+      });
+    });
 
     pasteBtn.addEventListener("click", async () => {
       try {
@@ -535,8 +526,8 @@
       previewBox.classList.remove("show");
       currentVideoData = null;
       showAlert(errorBox, "");
-      showAlert(warnBox, "");
       showAlert(infoBox, "");
+      updateSummaryAndWarnings();
     });
 
     function getHistory() {
@@ -624,7 +615,7 @@
         }
 
         previewBox.classList.add("show");
-        evaluateQualityWarning();
+        updateSummaryAndWarnings();
         saveToHistory({ url, title: data.title || url });
       } catch (err) {
         showAlert(errorBox, err.message || "حدث خطأ أثناء تحليل الرابط");
@@ -643,15 +634,22 @@
       const url = (currentVideoData && currentVideoData.url) || urlInput.value.trim();
       if (!url) return;
 
-      const quality = qualitySelect.value;
+      const isAudio = selectedRes === "audio";
       const title = (currentVideoData && currentVideoData.title) || "SaveFBS";
 
       downloadBtn.disabled = true;
       downloadBtn.textContent = "جاري تجهيز الملف...";
-      showAlert(infoBox, "يتم تجهيز الملف على السيرفر، قد يستغرق ذلك ثواني حسب الجودة...");
+      showAlert(infoBox, "يتم إرسال الطلب والمعالجة على السيرفر...");
 
       try {
-        const params = new URLSearchParams({ url, quality, title });
+        const params = new URLSearchParams({
+          url,
+          mode: isAudio ? "audio" : "video",
+          resolution: selectedRes,
+          fps: isAudio ? "auto" : selectedFps,
+          title,
+        });
+
         const response = await fetch(`/api/download?${params.toString()}`);
         if (!response.ok) {
           const errText = await response.text();
@@ -659,11 +657,11 @@
         }
 
         const blob = await response.blob();
-        const ext = quality === "audio" ? "mp3" : "mp4";
+        const ext = isAudio ? "mp3" : "mp4";
         const blobUrl = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = blobUrl;
-        a.download = `SaveFBS_${quality}.${ext}`;
+        a.download = `SaveFBS_${selectedRes}_${selectedFps}.${ext}`;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -692,6 +690,7 @@
         serverStatus.textContent = "تحقق من الاتصال";
       });
 
+    updateSummaryAndWarnings();
     renderHistory();
   </script>
 </body>
