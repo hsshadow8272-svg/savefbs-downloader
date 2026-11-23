@@ -16,7 +16,6 @@ if (!fs.existsSync(downloadsDir)) {
   fs.mkdirSync(downloadsDir, { recursive: true });
 }
 
-// تنظيف تلقائي للملفات المؤقتة الأقدم من 15 دقيقة
 setInterval(() => {
   fs.readdir(downloadsDir, (err, files) => {
     if (err || !files) return;
@@ -44,50 +43,87 @@ function sanitizeFilename(name) {
     .slice(0, 60);
 }
 
-function buildFormatSelector(preset) {
-  switch (preset) {
-    case "audio":
-      return "bestaudio/best";
-    case "8k":
-      return "bestvideo[height<=4320]+bestaudio/best[height<=4320]/best";
-    case "4k":
-      return "bestvideo[height<=2160]+bestaudio/best[height<=2160]/best";
-    case "2k":
-      return "bestvideo[height<=1440]+bestaudio/best[height<=1440]/best";
-    case "1080p":
-      return "bestvideo[height<=1080]+bestaudio/best[height<=1080]/best";
-    case "120fps":
-      return "bestvideo[fps>=100]+bestaudio/bestvideo[fps>=60]+bestaudio/bestvideo+bestaudio/best";
-    case "60fps":
-      return "bestvideo[fps>=50]+bestaudio/bestvideo[fps>=30]+bestaudio/bestvideo+bestaudio/best";
-    default:
-      return "bestvideo+bestaudio/best";
-  }
+function probeVideoFps(filePath) {
+  return new Promise((resolve) => {
+    execFile(
+      "ffprobe",
+      [
+        "-v",
+        "error",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=r_frame_rate",
+        "-of",
+        "default=noprint_wrappers=1:nokey=1",
+        filePath,
+      ],
+      { timeout: 15000 },
+      (err, stdout) => {
+        if (err || !stdout) return resolve(30);
+        const raw = stdout.trim();
+        if (raw.includes("/")) {
+          const [num, den] = raw.split("/").map(Number);
+          if (num > 0 && den > 0) return resolve(num / den);
+        }
+        const parsed = Number(raw);
+        resolve(parsed > 0 ? parsed : 30);
+      }
+    );
+  });
 }
 
-function buildFfmpegFilters(quality) {
+function buildFormatSelector(resolution, fps) {
+  const hMap = { "8k": 4320, "4k": 2160, "2k": 1440, "1080p": 1080 };
+  const fMap = { "120fps": 100, "60fps": 50 };
+
+  const maxH = hMap[resolution];
+  const minF = fMap[fps];
+
+  if (maxH && minF) {
+    return `bestvideo[height<=${maxH}][fps>=${minF}]+bestaudio/bestvideo[height<=${maxH}]+bestaudio/best[height<=${maxH}]/best`;
+  }
+  if (maxH) {
+    return `bestvideo[height<=${maxH}]+bestaudio/best[height<=${maxH}]/best`;
+  }
+  if (minF) {
+    return `bestvideo[fps>=${minF}]+bestaudio/bestvideo+bestaudio/best`;
+  }
+  return "bestvideo+bestaudio/best";
+}
+
+function buildCombinedFfmpegFilters(resolution, fps, sourceFps = 30) {
   const filters = [];
 
-  if (quality === "8k") {
+  if (resolution === "8k") {
     filters.push(
-      "scale=7680:4320:force_original_aspect_ratio=decrease,pad=7680:4320:(ow-iw)/2:(oh-ih)/2"
+      "scale=7680:4320:force_original_aspect_ratio=decrease:flags=lanczos,pad=7680:4320:(ow-iw)/2:(oh-ih)/2"
     );
-  } else if (quality === "4k") {
+  } else if (resolution === "4k") {
     filters.push(
-      "scale=3840:2160:force_original_aspect_ratio=decrease,pad=3840:2160:(ow-iw)/2:(oh-ih)/2"
+      "scale=3840:2160:force_original_aspect_ratio=decrease:flags=lanczos,pad=3840:2160:(ow-iw)/2:(oh-ih)/2"
     );
-  } else if (quality === "2k") {
+  } else if (resolution === "2k") {
     filters.push(
-      "scale=2560:1440:force_original_aspect_ratio=decrease,pad=2560:1440:(ow-iw)/2:(oh-ih)/2"
+      "scale=2560:1440:force_original_aspect_ratio=decrease:flags=lanczos,pad=2560:1440:(ow-iw)/2:(oh-ih)/2"
+    );
+  } else if (resolution === "1080p") {
+    filters.push(
+      "scale=1920:1080:force_original_aspect_ratio=decrease:flags=lanczos,pad=1920:1080:(ow-iw)/2:(oh-ih)/2"
     );
   }
 
-  if (quality === "120fps") {
+  // إضافة 4 فريمات بين كل فريمين = ضرب الفريمات في 5 (مع سقف أمان 240fps)
+  if (fps === "interp4") {
+    const baseFps = Math.max(15, Math.min(60, Number(sourceFps) || 30));
+    const targetFps = Math.min(240, Math.round(baseFps * 5));
     filters.push(
-      "minterpolate=fps=120:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1"
+      `minterpolate=fps=${targetFps}:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1`
     );
-  } else if (quality === "60fps") {
-    filters.push("fps=60");
+  } else if (fps === "120fps") {
+    filters.push("fps=fps=120:round=near");
+  } else if (fps === "60fps") {
+    filters.push("fps=fps=60:round=near");
   }
 
   return filters;
@@ -144,9 +180,7 @@ app.post("/api/fetch-video", (req, res) => {
     return res.status(400).json({ error: "الرابط مطلوب" });
   }
 
-  const cleanUrl = url.trim();
-
-  runYtDlpWithFallback(["-j", "--no-playlist"], cleanUrl, (err, stdout, stderr) => {
+  runYtDlpWithFallback(["-j", "--no-playlist"], url.trim(), (err, stdout, stderr) => {
     if (err) {
       console.error("yt-dlp error:", stderr || err.message);
       return res.status(500).json({
@@ -176,32 +210,22 @@ app.post("/api/fetch-video", (req, res) => {
 
 app.get("/api/download", (req, res) => {
   const videoUrl = (req.query.url || "").trim();
-  const quality = (req.query.quality || "best").toLowerCase();
+  const mode = (req.query.mode || "video").toLowerCase();
+  const resolution = (req.query.resolution || "best").toLowerCase();
+  const fps = (req.query.fps || "auto").toLowerCase();
   const customTitle = sanitizeFilename(req.query.title || "SaveFBS");
 
   if (!videoUrl) return res.status(400).send("الرابط مطلوب");
 
   const stamp = Date.now();
 
-  // وضع الصوت فقط (MP3)
-  if (quality === "audio") {
+  if (mode === "audio" || resolution === "audio") {
     const audioOutTemplate = path.join(downloadsDir, `audio_${stamp}.%(ext)s`);
     const finalAudioPath = path.join(downloadsDir, `audio_${stamp}.mp3`);
     const downloadName = `${customTitle}_SaveFBS.mp3`;
 
     runYtDlpWithFallback(
-      [
-        "-f",
-        "bestaudio/best",
-        "-x",
-        "--audio-format",
-        "mp3",
-        "--audio-quality",
-        "0",
-        "--no-playlist",
-        "-o",
-        audioOutTemplate,
-      ],
+      ["-f", "bestaudio/best", "-x", "--audio-format", "mp3", "--audio-quality", "0", "--no-playlist", "-o", audioOutTemplate],
       videoUrl,
       (err, stdout, stderr) => {
         if (err || !fs.existsSync(finalAudioPath)) {
@@ -220,22 +244,24 @@ app.get("/api/download", (req, res) => {
     return;
   }
 
-  // وضع الفيديو MP4
-  const rawFilePath = path.join(downloadsDir, `raw_${quality}_${stamp}.mp4`);
-  const finalFileName = `${customTitle}_${quality}_SaveFBS.mp4`;
+  const tag = `${resolution}_${fps}`;
+  const rawFilePath = path.join(downloadsDir, `raw_${tag}_${stamp}.mp4`);
+  const finalFileName = `${customTitle}_${tag}_SaveFBS.mp4`;
   const finalFilePath = path.join(downloadsDir, finalFileName);
-  const formatSelector = buildFormatSelector(quality);
-  const vfFilters = buildFfmpegFilters(quality);
+  const formatSelector = buildFormatSelector(resolution, fps);
 
   runYtDlpWithFallback(
     ["-f", formatSelector, "--merge-output-format", "mp4", "--no-playlist", "-o", rawFilePath],
     videoUrl,
-    (err, stdout, stderr) => {
+    async (err, stdout, stderr) => {
       if (err || !fs.existsSync(rawFilePath)) {
         console.error("yt-dlp download error:", stderr || (err && err.message));
         safeUnlink(rawFilePath);
         return res.status(500).send("فشل تحميل الفيديو بالجودة المطلوبة");
       }
+
+      const detectedFps = await probeVideoFps(rawFilePath);
+      const vfFilters = buildCombinedFfmpegFilters(resolution, fps, detectedFps);
 
       if (vfFilters.length === 0) {
         res.setHeader("Content-Type", "video/mp4");
@@ -255,7 +281,7 @@ app.get("/api/download", (req, res) => {
         "-preset",
         "ultrafast",
         "-crf",
-        "20",
+        "22",
         "-pix_fmt",
         "yuv420p",
         "-c:a",
