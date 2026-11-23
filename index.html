@@ -2,180 +2,367 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <title>SaveFBS — تحميل الفيديو بجودة عالية</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SaveFBS Downloader — تحميل فيديو وصوت بجودة عالية</title>
   <style>
-    * { box-sizing: border-box; }
+    :root {
+      --bg: #070b14;
+      --card: #0f172a;
+      --card-2: #162038;
+      --border: rgba(148, 163, 184, 0.16);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Arabic", sans-serif;
+    }
+
     body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0f172a;
-      color: #f8fafc;
-      padding: 16px;
-    }
-    .container {
-      max-width: 760px;
-      margin: 20px auto;
-      padding: 24px 20px;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 18px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-    }
-    .header {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.18), transparent 45%),
+        radial-gradient(circle at bottom left, rgba(34, 197, 94, 0.1), transparent 40%),
+        var(--bg);
+      color: var(--text);
+      padding: 20px 14px 48px;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      display: inline-flex;
       align-items: center;
-      flex-wrap: wrap;
       gap: 10px;
-      margin-bottom: 18px;
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: 0.3px;
     }
-    h1 {
-      margin: 0;
-      font-size: 1.5rem;
-      color: #38bdf8;
+
+    .badge-row {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
     }
+
     .badge {
-      background: #0ea5e922;
-      color: #7dd3fc;
-      border: 1px solid #0284c7;
-      padding: 4px 10px;
+      font-size: 0.76rem;
+      padding: 5px 10px;
       border-radius: 999px;
-      font-size: 0.8rem;
+      background: rgba(59, 130, 246, 0.14);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      color: #bfdbfe;
       font-weight: 600;
     }
-    .controls {
-      display: grid;
-      grid-template-columns: 1fr 190px auto;
-      gap: 10px;
-      margin-bottom: 14px;
+
+    .badge.green {
+      background: rgba(34, 197, 94, 0.14);
+      border-color: rgba(34, 197, 94, 0.35);
+      color: #bbf7d0;
     }
-    input, select {
-      width: 100%;
-      padding: 13px 14px;
-      border: 1px solid #475569;
-      border-radius: 12px;
-      background: #0f172a;
-      color: #f8fafc;
-      font-size: 1rem;
-    }
-    button {
-      padding: 13px 18px;
-      border: none;
-      border-radius: 12px;
-      background: #0284c7;
-      color: #fff;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    button:hover { background: #0369a1; }
-    button:disabled { opacity: 0.55; cursor: not-allowed; }
-    .quick-presets {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+
+    .card {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(12px);
       margin-bottom: 16px;
     }
-    .preset-chip {
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: #0f172a;
-      border: 1px solid #334155;
-      color: #cbd5e1;
-      font-size: 0.82rem;
-      cursor: pointer;
+
+    .input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
     }
-    .preset-chip.active {
-      background: #0284c7;
-      border-color: #38bdf8;
-      color: #fff;
+
+    input[type="url"],
+    select {
+      width: 100%;
+      background: var(--card-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 13px 14px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="url"]:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .mini-btn {
+      background: var(--card-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 0 13px;
+      font-size: 0.85rem;
       font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s, border-color 0.2s;
     }
-    .error {
-      color: #f87171;
-      font-weight: 600;
-      margin-top: 10px;
+
+    .mini-btn:hover {
+      background: #1e2d4d;
+      border-color: rgba(148, 163, 184, 0.35);
     }
-    .result {
-      display: none;
-      margin-top: 18px;
-      padding: 16px;
-      background: #0f172a;
-      border: 1px solid #334155;
+
+    .preset-section {
+      margin: 14px 0;
+    }
+
+    .preset-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      background: var(--card-2);
+      color: #cbd5e1;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 13px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .chip:hover {
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .chip.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(59, 130, 246, 0.35);
+    }
+
+    .primary-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #fff;
+      border: none;
       border-radius: 14px;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.2s;
+      margin-top: 6px;
     }
-    .meta {
+
+    .primary-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .download-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: transform 0.15s, opacity 0.2s;
+    }
+
+    .download-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .download-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .alert {
+      margin-top: 12px;
+      padding: 11px 13px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      display: none;
+    }
+
+    .alert.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fecaca;
+    }
+
+    .alert.warn {
+      display: block;
+      background: rgba(245, 158, 11, 0.14);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fde68a;
+    }
+
+    .alert.info {
+      display: block;
+      background: rgba(59, 130, 246, 0.14);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #bfdbfe;
+    }
+
+    .preview {
+      display: none;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .preview.show {
+      display: block;
+    }
+
+    .preview-grid {
       display: flex;
       gap: 14px;
-      align-items: center;
-      flex-wrap: wrap;
+      align-items: flex-start;
     }
+
     .thumb {
-      width: 150px;
-      height: 90px;
+      width: 128px;
+      height: 168px;
       object-fit: cover;
-      border-radius: 10px;
-      background: #1e293b;
+      border-radius: 12px;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
     }
-    .actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 14px;
+
+    .meta {
+      flex: 1;
+      min-width: 0;
     }
-    .dl-link {
-      display: inline-block;
-      padding: 11px 16px;
-      background: #16a34a;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 0.92rem;
-    }
-    .secondary-btn {
-      padding: 11px 14px;
-      background: #334155;
-      color: #f8fafc;
-      border-radius: 10px;
-      font-size: 0.88rem;
-    }
-    .history {
-      margin-top: 24px;
-      padding-top: 16px;
-      border-top: 1px solid #334155;
-    }
-    .history h3 {
-      margin: 0 0 10px;
+
+    .video-title {
       font-size: 1rem;
-      color: #94a3b8;
+      font-weight: 800;
+      margin-bottom: 8px;
+      word-break: break-word;
     }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      font-size: 0.82rem;
+    }
+
+    .stat-box {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+
+    .stat-box span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.73rem;
+      margin-bottom: 2px;
+    }
+
+    .history-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
     .history-item {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 10px;
-      padding: 9px 12px;
-      background: #0f172a;
-      border-radius: 10px;
-      margin-bottom: 8px;
-      font-size: 0.85rem;
+      cursor: pointer;
+      transition: border-color 0.2s;
     }
-    .history-item span {
+
+    .history-item:hover {
+      border-color: var(--primary);
+    }
+
+    .history-text {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      font-size: 0.85rem;
+      color: #e2e8f0;
     }
-    @media (max-width: 640px) {
-      .controls {
-        grid-template-columns: 1fr;
+
+    .empty-msg {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 520px) {
+      .preview-grid {
+        flex-direction: column;
       }
       .thumb {
         width: 100%;
-        height: 180px;
+        height: 200px;
       }
     }
   </style>
@@ -183,146 +370,329 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>SaveFBS Downloader</h1>
-      <span class="badge">iPhone 11+ & MP4 Ready</span>
-    </div>
-
-    <form id="form">
-      <div class="controls">
-        <input type="url" id="urlInput" placeholder="الصق رابط الفيديو هنا..." required />
-        <select id="qualitySelect">
-          <option value="best">أفضل جودة متاحة</option>
-          <option value="8k">8K (4320p)</option>
-          <option value="4k">4K (2160p)</option>
-          <option value="2k">2K (1440p)</option>
-          <option value="1080p">1080p Full HD</option>
-          <option value="120fps">120fps (إطارات عالية)</option>
-          <option value="60fps">60fps (سلس)</option>
-        </select>
-        <button type="submit" id="btn">جلب الفيديو</button>
+      <div class="brand">SaveFBS Downloader</div>
+      <div class="badge-row">
+        <span class="badge green">iOS MP4 جاهز</span>
+        <span class="badge">فيديو + صوت MP3</span>
+        <span class="badge" id="serverStatus">جاري فحص السيرفر...</span>
       </div>
-    </form>
-
-    <div class="quick-presets" id="presets">
-      <button type="button" class="preset-chip active" data-q="best">تلقائي</button>
-      <button type="button" class="preset-chip" data-q="8k">8K</button>
-      <button type="button" class="preset-chip" data-q="4k">4K</button>
-      <button type="button" class="preset-chip" data-q="2k">2K</button>
-      <button type="button" class="preset-chip" data-q="1080p">1080p</button>
-      <button type="button" class="preset-chip" data-q="120fps">120fps</button>
-      <button type="button" class="preset-chip" data-q="60fps">60fps</button>
     </div>
 
-    <div class="error" id="errorBox"></div>
+    <div class="card">
+      <div class="input-group">
+        <input id="urlInput" type="url" placeholder="الصق رابط الفيديو هنا (TikTok, YouTube, وغيرها)..." autocomplete="off" />
+        <button class="mini-btn" type="button" id="pasteBtn">لصق</button>
+        <button class="mini-btn" type="button" id="clearBtn">مسح</button>
+      </div>
 
-    <div class="result" id="resultBox">
-      <div class="meta">
-        <img id="thumbImg" class="thumb" alt="معاينة الفيديو" />
-        <div>
-          <h3 id="videoTitle" style="margin:0 0 6px;"></h3>
-          <div id="videoInfo" style="color:#94a3b8;font-size:0.88rem;"></div>
+      <div class="preset-section">
+        <span class="preset-label">اختر الجودة أو الفريمات أو الصوت:</span>
+        <div class="chips" id="presetChips">
+          <button type="button" class="chip active" data-value="best">تلقائي (الأفضل)</button>
+          <button type="button" class="chip" data-value="1080p">1080p Full HD</button>
+          <button type="button" class="chip" data-value="2k">2K</button>
+          <button type="button" class="chip" data-value="4k">4K</button>
+          <button type="button" class="chip" data-value="8k">8K (معالجة)</button>
+          <button type="button" class="chip" data-value="60fps">60fps</button>
+          <button type="button" class="chip" data-value="120fps">120fps (معالجة)</button>
+          <button type="button" class="chip" data-value="audio">صوت MP3 فقط</button>
         </div>
       </div>
-      <div class="actions">
-        <a id="dlBtn" class="dl-link" href="#">تحميل MP4</a>
-        <button type="button" class="secondary-btn" id="copyBtn">نسخ رابط التحميل</button>
+
+      <select id="qualitySelect" aria-label="اختيار الجودة">
+        <option value="best">تلقائي — أعلى جودة متاحة (MP4)</option>
+        <option value="1080p">1080p Full HD (MP4)</option>
+        <option value="2k">2K — 1440p (MP4)</option>
+        <option value="4k">4K — 2160p (MP4)</option>
+        <option value="8k">8K — 4320p (تحجيم عبر FFmpeg)</option>
+        <option value="60fps">60fps — إطارات عالية</option>
+        <option value="120fps">120fps — توليد إطارات (تحجيم/معالجة)</option>
+        <option value="audio">صوت فقط (MP3)</option>
+      </select>
+
+      <button class="primary-btn" id="fetchBtn" type="button">جلب وتحليل الفيديو</button>
+
+      <div id="errorBox" class="alert error"></div>
+      <div id="warnBox" class="alert warn"></div>
+      <div id="infoBox" class="alert info"></div>
+
+      <div id="previewBox" class="preview">
+        <div class="preview-grid">
+          <img id="thumbImg" class="thumb" src="" alt="معاينة الفيديو" />
+          <div class="meta">
+            <div id="videoTitle" class="video-title">—</div>
+            <div class="stats">
+              <div class="stat-box"><span>المنصة</span><strong id="metaPlatform">—</strong></div>
+              <div class="stat-box"><span>المدة</span><strong id="metaDuration">—</strong></div>
+              <div class="stat-box"><span>أقصى جودة بالمصدر</span><strong id="metaQuality">—</strong></div>
+              <div class="stat-box"><span>أقصى فريمات بالمصدر</span><strong id="metaFps">—</strong></div>
+            </div>
+          </div>
+        </div>
+        <button class="download-btn" id="downloadBtn" type="button">تحميل الآن</button>
       </div>
     </div>
 
-    <div class="history">
-      <h3>آخر الروابط المحللة</h3>
-      <div id="historyList"></div>
+    <div class="card">
+      <div class="history-title">
+        <span>آخر الروابط المحللة</span>
+        <button class="mini-btn" type="button" id="clearHistoryBtn" style="padding: 5px 10px; font-size: 0.76rem;">حذف السجل</button>
+      </div>
+      <div id="historyList" class="history-list">
+        <div class="empty-msg">لا يوجد سجل بعد</div>
+      </div>
     </div>
   </div>
 
   <script>
-    const API_BASE = window.location.origin;
-    const form = document.getElementById("form");
     const urlInput = document.getElementById("urlInput");
+    const pasteBtn = document.getElementById("pasteBtn");
+    const clearBtn = document.getElementById("clearBtn");
     const qualitySelect = document.getElementById("qualitySelect");
-    const btn = document.getElementById("btn");
+    const chips = Array.from(document.querySelectorAll("#presetChips .chip"));
+    const fetchBtn = document.getElementById("fetchBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const previewBox = document.getElementById("previewBox");
     const errorBox = document.getElementById("errorBox");
-    const resultBox = document.getElementById("resultBox");
-    const videoTitle = document.getElementById("videoTitle");
-    const videoInfo = document.getElementById("videoInfo");
-    const thumbImg = document.getElementById("thumbImg");
-    const dlBtn = document.getElementById("dlBtn");
-    const copyBtn = document.getElementById("copyBtn");
+    const warnBox = document.getElementById("warnBox");
+    const infoBox = document.getElementById("infoBox");
     const historyList = document.getElementById("historyList");
-    const chips = document.querySelectorAll(".preset-chip");
+    const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+    const serverStatus = document.getElementById("serverStatus");
 
-    function syncQuality(q) {
-      qualitySelect.value = q;
-      chips.forEach((c) => c.classList.toggle("active", c.dataset.q === q));
+    let currentVideoData = null;
+    const HISTORY_KEY = "savefbs_history_v2";
+
+    function showAlert(el, msg) {
+      if (!msg) {
+        el.style.display = "none";
+        el.textContent = "";
+        return;
+      }
+      el.textContent = msg;
+      el.style.display = "block";
+    }
+
+    function formatDuration(sec) {
+      const s = Number(sec) || 0;
+      if (!s) return "غير معروف";
+      const m = Math.floor(s / 60);
+      const r = Math.floor(s % 60);
+      return `${m}:${String(r).padStart(2, "0")}`;
+    }
+
+    function syncPresetUI(value) {
+      qualitySelect.value = value;
+      chips.forEach((chip) => {
+        chip.classList.toggle("active", chip.dataset.value === value);
+      });
+      evaluateQualityWarning();
+    }
+
+    function evaluateQualityWarning() {
+      const selected = qualitySelect.value;
+      if (selected === "8k" || selected === "120fps") {
+        showAlert(
+          warnBox,
+          "تنبيه: خيارات 8K و 120fps تعتمد على التحجيم والمعالجة عبر FFmpeg ولا تخلق تفاصيل أصلية غير موجودة في الفيديو، وقد تستغرق وقتاً أطول على السيرفر."
+        );
+      } else if (currentVideoData && currentVideoData.sourceHeight) {
+        const targetMap = { "1080p": 1080, "2k": 1440, "4k": 2160, "8k": 4320 };
+        const targetH = targetMap[selected];
+        if (targetH && currentVideoData.sourceHeight < targetH) {
+          showAlert(
+            warnBox,
+            `أعلى دقة متوفرة في المصدر هي ${currentVideoData.sourceHeight}p، لذلك لن تظهر تفاصيل أعلى من أصل الفيديو.`
+          );
+          return;
+        }
+        showAlert(warnBox, "");
+      } else {
+        showAlert(warnBox, "");
+      }
     }
 
     chips.forEach((chip) => {
-      chip.addEventListener("click", () => syncQuality(chip.dataset.q));
+      chip.addEventListener("click", () => syncPresetUI(chip.dataset.value));
     });
-    qualitySelect.addEventListener("change", () => syncQuality(qualitySelect.value));
 
-    function renderHistory(items) {
-      historyList.innerHTML = items.length
-        ? items
-            .map(
-              (item) =>
-                `<div class="history-item"><span>${item.title || item.url}</span><span style="color:#38bdf8;">${item.quality}</span></div>`
-            )
-            .join("")
-        : `<div style="color:#64748b;font-size:0.85rem;">لا يوجد سجل بعد</div>`;
-    }
+    qualitySelect.addEventListener("change", () => syncPresetUI(qualitySelect.value));
 
-    function saveHistory(entry) {
-      const prev = JSON.parse(localStorage.getItem("savefbs_history") || "[]");
-      const next = [entry, ...prev.filter((x) => x.url !== entry.url)].slice(0, 5);
-      localStorage.setItem("savefbs_history", JSON.stringify(next));
-      renderHistory(next);
-    }
-
-    renderHistory(JSON.parse(localStorage.getItem("savefbs_history") || "[]"));
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      btn.disabled = true;
-      btn.textContent = "جاري التحليل...";
-      errorBox.textContent = "";
-      resultBox.style.display = "none";
-
+    pasteBtn.addEventListener("click", async () => {
       try {
-        const cleanUrl = urlInput.value.trim();
-        const selectedQuality = qualitySelect.value;
-        const res = await fetch(`${API_BASE}/api/fetch-video`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url: cleanUrl }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "فشل جلب الفيديو");
-
-        videoTitle.textContent = data.title;
-        videoInfo.textContent = `الناشر: ${data.uploader} | أقصى جودة بالمصدر: ${data.sourceMaxQuality} (${data.sourceMaxFps})`;
-        thumbImg.src = data.thumbnail || "";
-        thumbImg.style.display = data.thumbnail ? "block" : "none";
-
-        const downloadUrl = `${API_BASE}/api/download?url=${encodeURIComponent(cleanUrl)}&quality=${encodeURIComponent(selectedQuality)}`;
-        dlBtn.href = downloadUrl;
-        dlBtn.textContent = `تحميل (${selectedQuality.toUpperCase()}) MP4`;
-
-        copyBtn.onclick = () => {
-          navigator.clipboard?.writeText(downloadUrl);
-          copyBtn.textContent = "تم النسخ ✓";
-          setTimeout(() => (copyBtn.textContent = "نسخ رابط التحميل"), 1500);
-        };
-
-        resultBox.style.display = "block";
-        saveHistory({ title: data.title, url: cleanUrl, quality: selectedQuality.toUpperCase() });
-      } catch (err) {
-        errorBox.textContent = err.message;
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "جلب الفيديو";
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          urlInput.value = text.trim();
+          urlInput.focus();
+        }
+      } catch {
+        showAlert(infoBox, "الصق الرابط يدوياً في خانة الإدخال.");
       }
     });
+
+    clearBtn.addEventListener("click", () => {
+      urlInput.value = "";
+      previewBox.classList.remove("show");
+      currentVideoData = null;
+      showAlert(errorBox, "");
+      showAlert(warnBox, "");
+      showAlert(infoBox, "");
+    });
+
+    function getHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function saveToHistory(item) {
+      const list = getHistory().filter((x) => x.url !== item.url);
+      list.unshift(item);
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(list.slice(0, 6)));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const list = getHistory();
+      if (!list.length) {
+        historyList.innerHTML = '<div class="empty-msg">لا يوجد سجل بعد</div>';
+        return;
+      }
+      historyList.innerHTML = list
+        .map(
+          (item) => `
+          <div class="history-item" data-url="${encodeURIComponent(item.url)}">
+            <div class="history-text">${item.title || item.url}</div>
+            <span style="color:#93c5fd;font-size:0.78rem;font-weight:700;">تحليل</span>
+          </div>`
+        )
+        .join("");
+
+      historyList.querySelectorAll(".history-item").forEach((el) => {
+        el.addEventListener("click", () => {
+          urlInput.value = decodeURIComponent(el.dataset.url);
+          fetchVideo();
+        });
+      });
+    }
+
+    clearHistoryBtn.addEventListener("click", () => {
+      localStorage.removeItem(HISTORY_KEY);
+      renderHistory();
+    });
+
+    async function fetchVideo() {
+      const url = urlInput.value.trim();
+      showAlert(errorBox, "");
+      showAlert(infoBox, "");
+
+      if (!url) {
+        showAlert(errorBox, "يرجى إدخال رابط الفيديو أولاً.");
+        return;
+      }
+
+      fetchBtn.disabled = true;
+      fetchBtn.textContent = "جاري التحليل...";
+      previewBox.classList.remove("show");
+
+      try {
+        const res = await fetch("/api/fetch-video", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "تعذر تحليل الرابط");
+        }
+
+        currentVideoData = { ...data, url };
+        document.getElementById("videoTitle").textContent = data.title || "فيديو";
+        document.getElementById("metaPlatform").textContent = data.extractor || "منصة";
+        document.getElementById("metaDuration").textContent = formatDuration(data.duration);
+        document.getElementById("metaQuality").textContent = data.sourceMaxQuality || "تلقائي";
+        document.getElementById("metaFps").textContent = data.sourceMaxFps || "تلقائي";
+
+        const thumbImg = document.getElementById("thumbImg");
+        if (data.thumbnail) {
+          thumbImg.src = data.thumbnail;
+          thumbImg.style.display = "block";
+        } else {
+          thumbImg.style.display = "none";
+        }
+
+        previewBox.classList.add("show");
+        evaluateQualityWarning();
+        saveToHistory({ url, title: data.title || url });
+      } catch (err) {
+        showAlert(errorBox, err.message || "حدث خطأ أثناء تحليل الرابط");
+      } finally {
+        fetchBtn.disabled = false;
+        fetchBtn.textContent = "جلب وتحليل الفيديو";
+      }
+    }
+
+    fetchBtn.addEventListener("click", fetchVideo);
+    urlInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") fetchVideo();
+    });
+
+    downloadBtn.addEventListener("click", async () => {
+      const url = (currentVideoData && currentVideoData.url) || urlInput.value.trim();
+      if (!url) return;
+
+      const quality = qualitySelect.value;
+      const title = (currentVideoData && currentVideoData.title) || "SaveFBS";
+
+      downloadBtn.disabled = true;
+      downloadBtn.textContent = "جاري تجهيز الملف...";
+      showAlert(infoBox, "يتم تجهيز الملف على السيرفر، قد يستغرق ذلك ثواني حسب الجودة...");
+
+      try {
+        const params = new URLSearchParams({ url, quality, title });
+        const response = await fetch(`/api/download?${params.toString()}`);
+        if (!response.ok) {
+          const errText = await response.text();
+          throw new Error(errText || "فشل التحميل");
+        }
+
+        const blob = await response.blob();
+        const ext = quality === "audio" ? "mp3" : "mp4";
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = `SaveFBS_${quality}.${ext}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+        showAlert(infoBox, "تم تجهيز الملف وبدأ التحميل بنجاح.");
+      } catch (err) {
+        showAlert(errorBox, err.message || "تعذر تحميل الملف");
+        showAlert(infoBox, "");
+      } finally {
+        downloadBtn.disabled = false;
+        downloadBtn.textContent = "تحميل الآن";
+      }
+    });
+
+    fetch("/api/health")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d && d.status === "ok") {
+          serverStatus.textContent = "السيرفر متصل";
+          serverStatus.classList.add("green");
+        } else {
+          serverStatus.textContent = "السيرفر يستعد";
+        }
+      })
+      .catch(() => {
+        serverStatus.textContent = "تحقق من الاتصال";
+      });
+
+    renderHistory();
   </script>
 </body>
 </html>
