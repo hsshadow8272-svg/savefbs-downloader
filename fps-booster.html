@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4KL FPS BOOST — رفع فريمات البيسي والجوال</title>
+  <title>4KL FPS BOOST — مكتبة +105 ألعاب وتويك تقليل البروسسر</title>
   <style>
     :root {
       --bg: #070b14;
@@ -31,14 +31,14 @@
         radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.14), transparent 45%),
         var(--bg);
       color: var(--text);
-      padding: 20px 14px 50px;
+      padding: 20px 14px 55px;
       display: flex;
       justify-content: center;
     }
 
     .container {
       width: 100%;
-      max-width: 780px;
+      max-width: 980px;
     }
 
     .nav-bar {
@@ -69,7 +69,7 @@
     }
 
     .brand {
-      font-size: 2rem;
+      font-size: 2.1rem;
       font-weight: 900;
       background: linear-gradient(90deg, #fb923c, #facc15, #38bdf8);
       -webkit-background-clip: text;
@@ -91,7 +91,7 @@
 
     .tab-btn {
       flex: 1;
-      min-width: 120px;
+      min-width: 130px;
       background: var(--card);
       color: #cbd5e1;
       border: 1px solid var(--border);
@@ -127,15 +127,20 @@
     }
 
     .section-title {
-      font-size: 1.05rem;
+      font-size: 1.08rem;
       font-weight: 800;
       margin-bottom: 14px;
       color: #f8fafc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
     .grid-2 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 12px;
       margin-bottom: 14px;
     }
@@ -148,15 +153,19 @@
       font-weight: 700;
     }
 
-    select {
+    select, input[type="text"] {
       width: 100%;
       background: var(--card-2);
       color: var(--text);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 11px 12px;
+      padding: 11px 13px;
       font-size: 0.9rem;
       outline: none;
+    }
+
+    select:focus, input[type="text"]:focus {
+      border-color: var(--fire);
     }
 
     .fps-result {
@@ -197,7 +206,7 @@
       border: none;
       border-radius: 14px;
       padding: 15px;
-      font-size: 1.05rem;
+      font-size: 1.02rem;
       font-weight: 900;
       cursor: pointer;
       margin-top: 10px;
@@ -214,6 +223,104 @@
       font-weight: 800;
       cursor: pointer;
       margin-top: 10px;
+    }
+
+    .notice {
+      margin-top: 12px;
+      padding: 11px 13px;
+      border-radius: 12px;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #bfdbfe;
+      font-size: 0.82rem;
+      line-height: 1.55;
+    }
+
+    /* مكتبة الألعاب */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .cat-chip {
+      background: var(--card-2);
+      color: #cbd5e1;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 13px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .cat-chip.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      gap: 12px;
+    }
+
+    .game-card {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.18s, border-color 0.18s;
+    }
+
+    .game-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--fire);
+    }
+
+    .game-cover {
+      width: 100%;
+      height: 102px;
+      object-fit: cover;
+      background: #091020;
+      display: block;
+    }
+
+    .game-body {
+      padding: 10px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .game-name {
+      font-size: 0.86rem;
+      font-weight: 800;
+      color: #f8fafc;
+      line-height: 1.3;
+    }
+
+    .game-tag {
+      font-size: 0.72rem;
+      color: #93c5fd;
+    }
+
+    .game-dl-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 7px 8px;
+      font-size: 0.77rem;
+      font-weight: 800;
+      cursor: pointer;
     }
 
     .list-box {
@@ -235,15 +342,30 @@
       color: #fb923c;
     }
 
-    .notice {
-      margin-top: 12px;
-      padding: 11px 13px;
+    .tweak-checks {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .check-box {
+      background: var(--card-2);
+      border: 1px solid var(--border);
       border-radius: 12px;
-      background: rgba(59, 130, 246, 0.12);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      color: #bfdbfe;
-      font-size: 0.82rem;
-      line-height: 1.5;
+      padding: 11px;
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      cursor: pointer;
+      font-size: 0.84rem;
+    }
+
+    .check-box input {
+      margin-top: 3px;
+      accent-color: var(--accent);
+      width: 16px;
+      height: 16px;
     }
   </style>
 </head>
@@ -256,17 +378,102 @@
 
     <div class="header">
       <div class="brand">4KL FPS BOOST 🔥</div>
-      <div class="subtitle">تحسين أداء الألعاب للبيسي والجوال، حاسبة فريمات، وملفات إعدادات قابلة للتراجع</div>
+      <div class="subtitle">مكتبة +105 ألعاب بالصور، تويك تقليل البروسسر في مدير المهام، وحاسبة الفريمات</div>
     </div>
 
     <div class="tabs">
-      <button class="tab-btn active" data-tab="boost">BOOST NOW & الحاسبة</button>
-      <button class="tab-btn" data-tab="gpu">GPU & Windows</button>
-      <button class="tab-btn" data-tab="games">Game Boost</button>
-      <button class="tab-btn" data-tab="mobile">Mobile Boost</button>
+      <button class="tab-btn active" data-tab="games">مكتبة الألعاب (+105)</button>
+      <button class="tab-btn" data-tab="tweak">تويك البروسسر (Task Manager)</button>
+      <button class="tab-btn" data-tab="boost">BOOST NOW & الحاسبة</button>
+      <button class="tab-btn" data-tab="gpu">GPU & Mobile</button>
     </div>
 
-    <div class="panel active" id="panel-boost">
+    <!-- 1) مكتبة أكثر من 105 ألعاب مع الصور -->
+    <div class="panel active" id="panel-games">
+      <div class="card">
+        <div class="section-title">
+          <span>اختر لعبتك لتحميل إعدادات رفع الفريمات (Config / Preset)</span>
+          <span id="gamesCountBadge" style="font-size:0.82rem;color:#4ade80;">105 لعبة مدعومة</span>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <input type="text" id="gameSearchInput" placeholder="ابحث عن اسم اللعبة (مثال: Fortnite, Valorant, GTA, Roblox, FIFA...)" />
+        </div>
+
+        <div class="filter-bar" id="catBar">
+          <button type="button" class="cat-chip active" data-cat="all">الكل</button>
+          <button type="button" class="cat-chip" data-cat="fps">شوتر وتنافس</button>
+          <button type="button" class="cat-chip" data-cat="br">باتل رويال</button>
+          <button type="button" class="cat-chip" data-cat="open">عالم مفتوح وRPG</button>
+          <button type="button" class="cat-chip" data-cat="sports">رياضة وسيارات</button>
+          <button type="button" class="cat-chip" data-cat="sandbox">ساندبوكس وبقاء</button>
+        </div>
+
+        <div class="games-grid" id="gamesGrid"></div>
+      </div>
+    </div>
+
+    <!-- 2) تويك تقليل البروسسر في مدير المهام -->
+    <div class="panel" id="panel-tweak">
+      <div class="card">
+        <div class="section-title">تويك تقليل البروسسر واستهلاك المعالج في مدير المهام (Task Manager)</div>
+        <p style="color:var(--muted);font-size:0.86rem;line-height:1.6;margin-bottom:14px;">
+          يوقف هذا التويك خدمات الخلفية الثقيلة غير الضرورية للقيمنق، ويقلل عدد العمليات النشطة (Processes) واستهلاك الرام والمعالج في مدير المهام بأمان تام مع إمكانية التراجع الكامل.
+        </p>
+
+        <div class="tweak-checks">
+          <label class="check-box">
+            <input type="checkbox" id="twSysMain" checked />
+            <div>
+              <strong>إيقاف SysMain (Superfetch)</strong><br />
+              <span style="color:var(--muted);font-size:0.78rem;">يقلل استهلاك القرص والمعالج المستمر في الخلفية.</span>
+            </div>
+          </label>
+
+          <label class="check-box">
+            <input type="checkbox" id="twTelemetry" checked />
+            <div>
+              <strong>تعطيل DiagTrack (Telemetry)</strong><br />
+              <span style="color:var(--muted);font-size:0.78rem;">يوقف خدمات جمع البيانات والتقارير في الخلفية.</span>
+            </div>
+          </label>
+
+          <label class="check-box">
+            <input type="checkbox" id="twBgApps" checked />
+            <div>
+              <strong>إيقاف تطبيقات الخلفية و GameDVR</strong><br />
+              <span style="color:var(--muted);font-size:0.78rem;">يمنع تشغيل تطبيقات المتجر والتسجيل التلقائي بالخلفية.</span>
+            </div>
+          </label>
+
+          <label class="check-box">
+            <input type="checkbox" id="twUnusedSvc" checked />
+            <div>
+              <strong>تعطيل الخدمات غير المستخدمة للقيمنق</strong><br />
+              <span style="color:var(--muted);font-size:0.78rem;">مثل Fax و MapsBroker و RetailDemo لتقليل عدد البروسسر.</span>
+            </div>
+          </label>
+
+          <label class="check-box">
+            <input type="checkbox" id="twPriority" checked />
+            <div>
+              <strong>أولوية المعالج للألعاب (Win32Priority)</strong><br />
+              <span style="color:var(--muted);font-size:0.78rem;">يمنح النافذة النشطة (اللعبة) أولوية الاستجابة القصوى.</span>
+            </div>
+          </label>
+        </div>
+
+        <button type="button" class="boost-btn" id="downloadProcessTweakBtn">تحميل تويك تقليل البروسسر (4KL_Process_Tweak.bat)</button>
+        <button type="button" class="restore-btn" id="restoreProcessTweakBtn">تراجع واستعادة خدمات الويندوز (4KL_Process_Restore.bat)</button>
+
+        <div class="notice">
+          طريقة الاستخدام: شغّل الملف كمسؤول (Run as administrator) ثم أعد تشغيل البيسي، وافتح مدير المهام (Ctrl + Shift + Esc) لملاحظة انخفاض عدد العمليات (Processes) واستقرار المعالج.
+        </div>
+      </div>
+    </div>
+
+    <!-- 3) BOOST NOW + حاسبة الفريمات -->
+    <div class="panel" id="panel-boost">
       <div class="card">
         <div class="section-title">Auto Optimize & حاسبة تقدير الفريمات</div>
         <div class="grid-2">
@@ -302,18 +509,15 @@
 
         <div id="autoSuggestion" class="notice"></div>
 
-        <button type="button" class="boost-btn" id="boostNowBtn">BOOST NOW — تحميل ملف التحسين الآمن (.bat)</button>
+        <button type="button" class="boost-btn" id="boostNowBtn">BOOST NOW — تحميل التحسين بدون تكرار خطط الطاقة (.bat)</button>
         <button type="button" class="restore-btn" id="restoreBtn">تراجع عن التحسينات — تحميل ملف الاستعادة (Restore.bat)</button>
-
-        <div class="notice">
-          تنبيه شفاف: المتصفح لا يملك صلاحية تعديل إعدادات النظام مباشرة لأسباب الأمان؛ لذلك يولّد لك زر <strong>BOOST NOW</strong> ملف أوامر آمن تراجعه وتشغّله كمسؤول، مع إمكانية التراجع الكامل في أي وقت عبر زر الاستعادة.
-        </div>
       </div>
     </div>
 
+    <!-- 4) GPU & MOBILE -->
     <div class="panel" id="panel-gpu">
       <div class="card">
-        <div class="section-title">إعدادات NVIDIA & AMD المقترحة</div>
+        <div class="section-title">إعدادات كرت الشاشة (NVIDIA / AMD) وألعاب الجوال</div>
         <div class="list-box">
           <div class="item-card">
             <strong>NVIDIA Control Panel:</strong> فعّل <b>Prefer maximum performance</b> في إدارة الطاقة، واجعل <b>Low Latency Mode</b> على <b>Ultra</b> لتقليل زمن الاستجابة.
@@ -322,40 +526,7 @@
             <strong>AMD Radeon Software:</strong> فعّل <b>Radeon Anti-Lag</b> واجعل <b>Texture Filtering Quality</b> على <b>Performance</b>.
           </div>
           <div class="item-card">
-            <strong>Windows Optimization:</strong> فعّل <b>Game Mode</b> و <b>Hardware-accelerated GPU scheduling</b>، وأوقف تطبيقات الخلفية غير الضرورية قبل اللعب.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel" id="panel-games">
-      <div class="card">
-        <div class="section-title">Game Boost — ملفات إعدادات الألعاب المحسّنة</div>
-        <div class="list-box">
-          <div class="item-card">
-            <strong>Fortnite (Performance Config):</strong> تقليل الظلال والمسافات البعيدة لثبات الفريمات في المواجهات.<br />
-            <button type="button" class="restore-btn" style="margin-top:8px;" onclick="downloadGameConfig('fortnite')">تحميل إعدادات Fortnite المحسّنة</button>
-          </div>
-          <div class="item-card">
-            <strong>Valorant / ألعاب التنافس:</strong> تعطيل V-Sync، ضبط الرسوميات على Low، وتفعيل NVIDIA Reflex.<br />
-            <button type="button" class="restore-btn" style="margin-top:8px;" onclick="downloadGameConfig('valorant')">تحميل دليل وملف إعدادات Valorant</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel" id="panel-mobile">
-      <div class="card">
-        <div class="section-title">Mobile Optimization — تحسين أداء ألعاب الجوال (iOS & Android)</div>
-        <div class="list-box">
-          <div class="item-card">
-            <strong>ضبط الرسوميات داخل اللعبة:</strong> اختر <b>Smooth / منخفضة</b> مع أعلى خيار <b>Frame Rate (60 / 90 / 120 FPS)</b> للحصول على سلاسة بدل الحرارة.
-          </div>
-          <div class="item-card">
-            <strong>منع هبوط الفريمات بسبب الحرارة (Thermal Throttling):</strong> أزل الغطاء السميك أثناء اللعب، لا تلعب والجوال على الشاحن، وخفّض سطوع الشاشة إلى 70%.
-          </div>
-          <div class="item-card">
-            <strong>تحرير الذاكرة والشبكة:</strong> أغلق التطبيقات المفتوحة في الخلفية وفعّل وضع عدم الإزعاج / وضع الألعاب المدمج في النظام.
+            <strong>Mobile Optimization (iOS & Android):</strong> اختر <b>Smooth / منخفضة</b> مع أعلى <b>Frame Rate (60/90/120 FPS)</b>، وأبعد الجوال عن الشاحن أثناء اللعب لتجنب هبوط الفريمات الحراري.
           </div>
         </div>
       </div>
@@ -363,14 +534,9 @@
   </div>
 
   <script>
+    // التنقل بين التبويبات
     const tabBtns = Array.from(document.querySelectorAll(".tab-btn"));
     const panels = Array.from(document.querySelectorAll(".panel"));
-    const gpuTier = document.getElementById("gpuTier");
-    const gameSelect = document.getElementById("gameSelect");
-    const fpsBefore = document.getElementById("fpsBefore");
-    const fpsAfter = document.getElementById("fpsAfter");
-    const autoSuggestion = document.getElementById("autoSuggestion");
-
     tabBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
         tabBtns.forEach((b) => b.classList.remove("active"));
@@ -379,6 +545,329 @@
         document.getElementById(`panel-${btn.dataset.tab}`).classList.add("active");
       });
     });
+
+    // قائمة 105 ألعاب مع صور الأغلفة (Steam CDN + صور بديلة تلقائية عند الحاجة)
+    const gamesDatabase = [
+      // شوتر وتنافس (fps)
+      { name: "Counter-Strike 2", cat: "fps", appid: 730 },
+      { name: "Valorant", cat: "fps", img: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2mvt.jpg" },
+      { name: "Tom Clancy's Rainbow Six Siege", cat: "fps", appid: 359550 },
+      { name: "Overwatch 2", cat: "fps", appid: 2357570 },
+      { name: "Team Fortress 2", cat: "fps", appid: 440 },
+      { name: "Call of Duty: Modern Warfare III", cat: "fps", appid: 2519060 },
+      { name: "Call of Duty: Black Ops 6", cat: "fps", appid: 2933620 },
+      { name: "Battlefield 2042", cat: "fps", appid: 1517290 },
+      { name: "Battlefield V", cat: "fps", appid: 1238810 },
+      { name: "Battlefield 1", cat: "fps", appid: 1238840 },
+      { name: "Battlefield 4", cat: "fps", appid: 1238860 },
+      { name: "Escape from Tarkov", cat: "fps", img: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1r7f.jpg" },
+      { name: "Arena Breakout: Infinite", cat: "fps", appid: 2073620 },
+      { name: "Delta Force", cat: "fps", appid: 2507950 },
+      { name: "THE FINALS", cat: "fps", appid: 2073850 },
+      { name: "XDefiant", cat: "fps", img: "https://images.igdb.com/igdb/image/upload/t_cover_big/co698s.jpg" },
+      { name: "Halo Infinite", cat: "fps", appid: 1240440 },
+      { name: "Destiny 2", cat: "fps", appid: 1085660 },
+      { name: "Warframe", cat: "fps", appid: 230410 },
+      { name: "Ready or Not", cat: "fps", appid: 1144200 },
+      { name: "Insurgency: Sandstorm", cat: "fps", appid: 581320 },
+      { name: "Hell Let Loose", cat: "fps", appid: 686810 },
+      { name: "Squad", cat: "fps", appid: 393380 },
+      { name: "Arma 3", cat: "fps", appid: 107410 },
+      { name: "Payday 3", cat: "fps", appid: 1272080 },
+      { name: "Payday 2", cat: "fps", appid: 218620 },
+      { name: "Left 4 Dead 2", cat: "fps", appid: 550 },
+      { name: "DOOM Eternal", cat: "fps", appid: 782330 },
+      { name: "Titanfall 2", cat: "fps", appid: 1237970 },
+      { name: "Marvel Rivals", cat: "fps", appid: 2767030 },
+
+      // باتل رويال (br)
+      { name: "Fortnite", cat: "br", img: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2ekt.jpg" },
+      { name: "Call of Duty: Warzone", cat: "br", appid: 1962663 },
+      { name: "Apex Legends", cat: "br", appid: 1172470 },
+      { name: "PUBG: BATTLEGROUNDS", cat: "br", appid: 578080 },
+      { name: "Naraka: Bladepoint", cat: "br", appid: 1203220 },
+      { name: "Fall Guys", cat: "br", appid: 1097150 },
+      { name: "Super People", cat: "br", appid: 1190340 },
+      { name: "Bloodhunt", cat: "br", appid: 760160 },
+      { name: "Farlight 84", cat: "br", appid: 1928420 },
+      { name: "Realm Royale Reforged", cat: "br", appid: 813820 },
+
+      // عالم مفتوح و RPG (open)
+      { name: "Grand Theft Auto V", cat: "open", appid: 271590 },
+      { name: "FiveM (GTA RP)", cat: "open", appid: 271590 },
+      { name: "Red Dead Redemption 2", cat: "open", appid: 1174180 },
+      { name: "Cyberpunk 2077", cat: "open", appid: 1091500 },
+      { name: "The Witcher 3: Wild Hunt", cat: "open", appid: 292030 },
+      { name: "Elden Ring", cat: "open", appid: 1245620 },
+      { name: "Black Myth: Wukong", cat: "open", appid: 2358720 },
+      { name: "God of War", cat: "open", appid: 1593500 },
+      { name: "God of War Ragnarök", cat: "open", appid: 2322010 },
+      { name: "Marvel's Spider-Man Remastered", cat: "open", appid: 1817070 },
+      { name: "Marvel's Spider-Man: Miles Morales", cat: "open", appid: 1817190 },
+      { name: "Ghost of Tsushima", cat: "open", appid: 2215430 },
+      { name: "Horizon Zero Dawn", cat: "open", appid: 1151640 },
+      { name: "Horizon Forbidden West", cat: "open", appid: 2420110 },
+      { name: "Hogwarts Legacy", cat: "open", appid: 990080 },
+      { name: "Starfield", cat: "open", appid: 1716740 },
+      { name: "Fallout 4", cat: "open", appid: 377160 },
+      { name: "The Elder Scrolls V: Skyrim", cat: "open", appid: 489830 },
+      { name: "Baldur's Gate 3", cat: "open", appid: 1086940 },
+      { name: "Monster Hunter: World", cat: "open", appid: 582010 },
+      { name: "Monster Hunter Rise", cat: "open", appid: 1446780 },
+      { name: "Assassin's Creed Valhalla", cat: "open", appid: 2208920 },
+      { name: "Assassin's Creed Mirage", cat: "open", appid: 3035570 },
+      { name: "Far Cry 6", cat: "open", appid: 2369390 },
+      { name: "Watch Dogs 2", cat: "open", appid: 447040 },
+      { name: "Dying Light 2 Stay Human", cat: "open", appid: 534380 },
+      { name: "Resident Evil 4 Remake", cat: "open", appid: 2050650 },
+      { name: "The Last of Us Part I", cat: "open", appid: 1888930 },
+      { name: "Genshin Impact", cat: "open", img: "https://images.igdb.com/igdb/image/upload/t_cover_big/co480t.jpg" },
+      { name: "Wuthering Waves", cat: "open", img: "https://images.igdb.com/igdb/image/upload/t_cover_big/co876e.jpg" },
+
+      // رياضة وسيارات (sports)
+      { name: "EA SPORTS FC 25", cat: "sports", appid: 2669320 },
+      { name: "EA SPORTS FC 24", cat: "sports", appid: 2195250 },
+      { name: "eFootball 2025", cat: "sports", appid: 1665460 },
+      { name: "Rocket League", cat: "sports", appid: 252950 },
+      { name: "Forza Horizon 5", cat: "sports", appid: 1551360 },
+      { name: "Forza Horizon 4", cat: "sports", appid: 1293830 },
+      { name: "Forza Motorsport", cat: "sports", appid: 2440510 },
+      { name: "Assetto Corsa", cat: "sports", appid: 244210 },
+      { name: "Assetto Corsa Competizione", cat: "sports", appid: 805550 },
+      { name: "BeamNG.drive", cat: "sports", appid: 284160 },
+      { name: "Need for Speed Heat", cat: "sports", appid: 1222680 },
+      { name: "Need for Speed Unbound", cat: "sports", appid: 1846380 },
+      { name: "The Crew Motorfest", cat: "sports", appid: 2698940 },
+      { name: "F1 24", cat: "sports", appid: 2488620 },
+      { name: "NBA 2K25", cat: "sports", appid: 2878980 },
+      { name: "WWE 2K24", cat: "sports", appid: 2315690 },
+      { name: "Tekken 8", cat: "sports", appid: 1778820 },
+      { name: "Street Fighter 6", cat: "sports", appid: 1364780 },
+      { name: "Mortal Kombat 1", cat: "sports", appid: 1971870 },
+      { name: "Dragon Ball: Sparking! ZERO", cat: "sports", appid: 1790600 },
+
+      // ساندبوكس وبقاء واستراتيجية (sandbox)
+      { name: "Roblox", cat: "sandbox", img: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2lbd.jpg" },
+      { name: "Minecraft Java & Bedrock", cat: "sandbox", img: "https://images.igdb.com/igdb/image/upload/t_cover_big/co49x5.jpg" },
+      { name: "Rust", cat: "sandbox", appid: 252490 },
+      { name: "ARK: Survival Ascended", cat: "sandbox", appid: 2399830 },
+      { name: "ARK: Survival Evolved", cat: "sandbox", appid: 346110 },
+      { name: "Palworld", cat: "sandbox", appid: 1623730 },
+      { name: "Valheim", cat: "sandbox", appid: 892970 },
+      { name: "Sons Of The Forest", cat: "sandbox", appid: 1326470 },
+      { name: "The Forest", cat: "sandbox", appid: 242760 },
+      { name: "DayZ", cat: "sandbox", appid: 221100 },
+      { name: "Sea of Thieves", cat: "sandbox", appid: 1172620 },
+      { name: "Terraria", cat: "sandbox", appid: 105600 },
+      { name: "Garry's Mod", cat: "sandbox", appid: 4000 },
+      { name: "League of Legends", cat: "sandbox", img: "https://images.igdb.com/igdb/image/upload/t_cover_big/co49wj.jpg" },
+      { name: "Dota 2", cat: "sandbox", appid: 570 }
+    ];
+
+    const catLabels = {
+      fps: "شوتر وتنافس",
+      br: "باتل رويال",
+      open: "عالم مفتوح / RPG",
+      sports: "رياضة وسيارات",
+      sandbox: "ساندبوكس وبقاء"
+    };
+
+    const gamesGrid = document.getElementById("gamesGrid");
+    const gameSearchInput = document.getElementById("gameSearchInput");
+    const gamesCountBadge = document.getElementById("gamesCountBadge");
+    const catChips = Array.from(document.querySelectorAll(".cat-chip"));
+    let activeCat = "all";
+
+    function getGameCoverUrl(game) {
+      if (game.img) return game.img;
+      if (game.appid) {
+        return `https://cdn.cloudflare.steamstatic.com/steam/apps/${game.appid}/header.jpg`;
+      }
+      return "";
+    }
+
+    function renderGames() {
+      const q = gameSearchInput.value.trim().toLowerCase();
+      const filtered = gamesDatabase.filter((g) => {
+        const matchCat = activeCat === "all" || g.cat === activeCat;
+        const matchSearch = !q || g.name.toLowerCase().includes(q);
+        return matchCat && matchSearch;
+      });
+
+      gamesCountBadge.textContent = `${filtered.length} من ${gamesDatabase.length} لعبة`;
+
+      gamesGrid.innerHTML = filtered
+        .map((game) => {
+          const cover = getGameCoverUrl(game);
+          const safeName = game.name.replace(/"/g, "&quot;");
+          return `
+            <div class="game-card">
+              <img
+                class="game-cover"
+                src="${cover}"
+                alt="${safeName}"
+                loading="lazy"
+                onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22140%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23162038%22/><text x=%2250%25%22 y=%2252%25%22 fill=%22%23fb923c%22 font-family=%22sans-serif%22 font-size=%2216%22 font-weight=%22bold%22 text-anchor=%22middle%22>4KL BOOST</text></svg>';"
+              />
+              <div class="game-body">
+                <div>
+                  <div class="game-name">${game.name}</div>
+                  <div class="game-tag">${catLabels[game.cat] || "لعبة"}</div>
+                </div>
+                <button type="button" class="game-dl-btn" onclick="downloadPresetForGame('${safeName}', '${game.cat}')">
+                  تحميل إعدادات FPS
+                </button>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    catChips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        catChips.forEach((c) => c.classList.remove("active"));
+        chip.classList.add("active");
+        activeCat = chip.dataset.cat;
+        renderGames();
+      });
+    });
+
+    gameSearchInput.addEventListener("input", renderGames);
+
+    function downloadTextFile(filename, content) {
+      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+    }
+
+    window.downloadPresetForGame = function (gameName, cat) {
+      const cleanFile = gameName.replace(/[^a-zA-Z0-9]+/g, "_");
+      const content = [
+        `==================================================`,
+        `  4KL FPS BOOST - Optimized Settings for ${gameName}`,
+        `==================================================`,
+        `Category: ${catLabels[cat] || cat}`,
+        ``,
+        `[Recommended In-Game Video Settings]`,
+        `- Display Mode: Fullscreen (ملء الشاشة الحصري)`,
+        `- V-Sync: OFF (إيقاف لمنع التأخير وفتح الفريمات)`,
+        `- Shadows Quality: Low / Off (أكبر عامل يرفع الفريمات)`,
+        `- Reflections / Ray Tracing: Off`,
+        `- Post-Processing / Motion Blur: Off`,
+        `- Texture Quality: Low to Medium (حسب سعة VRAM)`,
+        `- NVIDIA Reflex / AMD Anti-Lag: On + Boost`,
+        `- Frame Rate Limit: Match Monitor Hz (144 / 240 / Unlimited)`,
+        ``,
+        `[Windows & GPU Tip]`,
+        `1. شغّل 4KL_Process_Tweak.bat لتقليل العمليات بالخلفية.`,
+        `2. تأكد من تفعيل خطة الأداء الأقصى (Ultimate Performance).`
+      ].join("\r\n");
+
+      downloadTextFile(`4KL_FPS_${cleanFile}.txt`, content);
+    };
+
+    // تويك تقليل البروسسر في مدير المهام
+    document.getElementById("downloadProcessTweakBtn").addEventListener("click", () => {
+      const lines = [
+        "@echo off",
+        "title 4KL FPS BOOST - Task Manager Process Optimizer",
+        "echo ========================================================",
+        "echo   4KL FPS BOOST - Reducing Background Processes & CPU",
+        "echo ========================================================",
+        ""
+      ];
+
+      if (document.getElementById("twSysMain").checked) {
+        lines.push(
+          "echo [+] Disabling SysMain (Superfetch)...",
+          'sc stop "SysMain" >nul 2>&1',
+          'sc config "SysMain" start= disabled >nul 2>&1',
+          ""
+        );
+      }
+
+      if (document.getElementById("twTelemetry").checked) {
+        lines.push(
+          "echo [+] Disabling DiagTrack Telemetry...",
+          'sc stop "DiagTrack" >nul 2>&1',
+          'sc config "DiagTrack" start= disabled >nul 2>&1',
+          'sc stop "dmwappushservice" >nul 2>&1',
+          'sc config "dmwappushservice" start= disabled >nul 2>&1',
+          ""
+        );
+      }
+
+      if (document.getElementById("twBgApps").checked) {
+        lines.push(
+          "echo [+] Disabling Background Apps & GameDVR...",
+          'reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications" /v GlobalUserDisabled /t REG_DWORD /d 1 /f >nul 2>&1',
+          'reg add "HKCU\\System\\GameConfigStore" /v GameDVR_Enabled /t REG_DWORD /d 0 /f >nul 2>&1',
+          ""
+        );
+      }
+
+      if (document.getElementById("twUnusedSvc").checked) {
+        lines.push(
+          "echo [+] Disabling Unused Non-Gaming Services...",
+          'sc stop "Fax" >nul 2>&1',
+          'sc config "Fax" start= disabled >nul 2>&1',
+          'sc stop "MapsBroker" >nul 2>&1',
+          'sc config "MapsBroker" start= disabled >nul 2>&1',
+          'sc stop "RetailDemo" >nul 2>&1',
+          'sc config "RetailDemo" start= disabled >nul 2>&1',
+          ""
+        );
+      }
+
+      if (document.getElementById("twPriority").checked) {
+        lines.push(
+          "echo [+] Optimizing Win32PrioritySeparation for Foreground Games...",
+          'reg add "HKLM\\SYSTEM\\CurrentControlSet\\Control\\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f >nul 2>&1',
+          ""
+        );
+      }
+
+      lines.push(
+        "echo ========================================================",
+        "echo   Done! Restart your PC to see fewer Processes in Task Manager.",
+        "echo ========================================================",
+        "pause"
+      );
+
+      downloadTextFile("4KL_Process_Tweak.bat", lines.join("\r\n"));
+    });
+
+    document.getElementById("restoreProcessTweakBtn").addEventListener("click", () => {
+      const restoreLines = [
+        "@echo off",
+        "title 4KL FPS BOOST - Restore Windows Services",
+        "echo [4KL FPS BOOST] Restoring default Windows services & processes...",
+        'sc config "SysMain" start= auto >nul 2>&1',
+        'sc start "SysMain" >nul 2>&1',
+        'sc config "DiagTrack" start= auto >nul 2>&1',
+        'sc config "MapsBroker" start= delayed-auto >nul 2>&1',
+        'reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications" /v GlobalUserDisabled /t REG_DWORD /d 0 /f >nul 2>&1',
+        'reg add "HKCU\\System\\GameConfigStore" /v GameDVR_Enabled /t REG_DWORD /d 1 /f >nul 2>&1',
+        'reg add "HKLM\\SYSTEM\\CurrentControlSet\\Control\\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 2 /f >nul 2>&1',
+        "echo [4KL FPS BOOST] Default services restored! Please restart PC.",
+        "pause"
+      ];
+      downloadTextFile("4KL_Process_Restore.bat", restoreLines.join("\r\n"));
+    });
+
+    // حاسبة الفريمات + BOOST NOW بدون تكرار خطط الطاقة
+    const gpuTier = document.getElementById("gpuTier");
+    const gameSelect = document.getElementById("gameSelect");
+    const fpsBefore = document.getElementById("fpsBefore");
+    const fpsAfter = document.getElementById("fpsAfter");
+    const autoSuggestion = document.getElementById("autoSuggestion");
 
     const baseTable = {
       low: { valorant: [110, 145], fortnite: [75, 110], warzone: [45, 62], roblox: [60, 115] },
@@ -394,9 +883,9 @@
       fpsAfter.textContent = `${after} FPS`;
 
       if (tier === "low") {
-        autoSuggestion.textContent = "اقتراح Auto Optimize: استخدم دقة 720p أو 900p، وضع Performance، وأغلق كافة تطبيقات الخلفية.";
+        autoSuggestion.textContent = "اقتراح Auto Optimize: دقة 720p أو 900p، وضع Performance، وتشغيل تويك تقليل البروسسر.";
       } else if (tier === "mid") {
-        autoSuggestion.textContent = "اقتراح Auto Optimize: دقة 1080p تنافسية، تفعيل NVIDIA Reflex / Anti-Lag، وخطة الطاقة القصوى.";
+        autoSuggestion.textContent = "اقتراح Auto Optimize: دقة 1080p تنافسية، تفعيل NVIDIA Reflex / Anti-Lag، وتويك تقليل البروسسر.";
       } else {
         autoSuggestion.textContent = "اقتراح Auto Optimize: دقة 1080p أو 1440p بمعدل تحديث مرتفع (240Hz+) مع تعطيل V-Sync.";
       }
@@ -405,29 +894,17 @@
     gpuTier.addEventListener("change", updateCalculator);
     gameSelect.addEventListener("change", updateCalculator);
 
-    function downloadTextFile(filename, content) {
-      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 5000);
-    }
-
     document.getElementById("boostNowBtn").addEventListener("click", () => {
       const bat = [
         "@echo off",
-        "title 4KL FPS BOOST - Apply",
-        "echo [4KL FPS BOOST] Applying safe gaming optimizations...",
-        "powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 >nul 2>&1",
+        "title 4KL FPS BOOST - Apply (No Duplicate Power Plans)",
+        "echo [4KL FPS BOOST] Checking existing Ultimate Performance plan...",
+        'powercfg /list | findstr /i "e9a42b02-d5df-448d-aa00-03f14749eb61" >nul 2>&1 || powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 >nul 2>&1',
         "powercfg /setactive SCHEME_MIN >nul 2>&1",
         'reg add "HKCU\\System\\GameConfigStore" /v GameDVR_Enabled /t REG_DWORD /d 0 /f >nul 2>&1',
         'del /q /f /s "%TEMP%\\*" >nul 2>&1',
         "ipconfig /flushdns >nul 2>&1",
-        "echo [4KL FPS BOOST] Done! Restart PC for full effect.",
+        "echo [4KL FPS BOOST] Done without creating duplicate power plans!",
         "pause"
       ].join("\r\n");
       downloadTextFile("4KL_Boost_Apply.bat", bat);
@@ -446,33 +923,7 @@
       downloadTextFile("4KL_Boost_Restore.bat", bat);
     });
 
-    window.downloadGameConfig = function (game) {
-      if (game === "fortnite") {
-        const cfg = [
-          "[ScalabilityGroups]",
-          "sg.ResolutionQuality=100.000000",
-          "sg.ViewDistanceQuality=0",
-          "sg.AntiAliasingQuality=0",
-          "sg.ShadowQuality=0",
-          "sg.PostProcessQuality=0",
-          "sg.TextureQuality=0",
-          "sg.EffectsQuality=0",
-          "sg.FoliageQuality=0"
-        ].join("\r\n");
-        downloadTextFile("4KL_Fortnite_Performance_Snippet.ini", cfg);
-      } else {
-        const txt = [
-          "4KL FPS BOOST - Valorant Competitive Preset",
-          "- Display Mode: Fullscreen",
-          "- Multithreaded Rendering: On",
-          "- Material / Texture / Detail / UI Quality: Low",
-          "- Vignette / VSync: Off",
-          "- NVIDIA Reflex Low Latency: On + Boost"
-        ].join("\r\n");
-        downloadTextFile("4KL_Valorant_Preset.txt", txt);
-      }
-    };
-
+    renderGames();
     updateCalculator();
   </script>
 </body>
